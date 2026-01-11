@@ -1,0 +1,11 @@
+# Build configuration for code generation
+
+targets:
+  $default:
+    builders:
+      # Exclude drift_dev from entity and model files that don't use drift
+      drift_dev:
+        enabled: false
+        generate_for:
+          # Only include if we create drift database files later
+          - lib/core/database/**
