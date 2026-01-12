@@ -198,8 +198,28 @@ final routerProvider = Provider<GoRouter>((ref) {
 // SPLASH SCREEN
 // ============================================================================
 
-class SplashScreen extends StatelessWidget {
+class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
+
+  @override
+  ConsumerState<SplashScreen> createState() => _SplashScreenState();
+}
+
+class _SplashScreenState extends ConsumerState<SplashScreen> {
+  @override
+  void initState() {
+    super.initState();
+    _startSplashTimer();
+  }
+
+  void _startSplashTimer() {
+    Future.delayed(const Duration(seconds: 3), () {
+      if (mounted) {
+        // Navigate away from splash by triggering router refresh
+        ref.read(routerProvider).refresh();
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {

@@ -12,26 +12,21 @@ class RegistrationScreen extends ConsumerStatefulWidget {
 
 class _RegistrationScreenState extends ConsumerState<RegistrationScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
-  final _confirmPasswordController = TextEditingController();
+
+  // Controllers
   final _firstNameController = TextEditingController();
   final _lastNameController = TextEditingController();
-  final _phoneController = TextEditingController();
+  final _emailController = TextEditingController();
 
-  bool _obscurePassword = true;
-  bool _obscureConfirmPassword = true;
+  // State
   String? _selectedGender;
   DateTime? _dateOfBirth;
 
   @override
   void dispose() {
-    _emailController.dispose();
-    _passwordController.dispose();
-    _confirmPasswordController.dispose();
     _firstNameController.dispose();
     _lastNameController.dispose();
-    _phoneController.dispose();
+    _emailController.dispose();
     super.dispose();
   }
 
@@ -46,6 +41,7 @@ class _RegistrationScreenState extends ConsumerState<RegistrationScreen> {
       initialDate: _dateOfBirth ?? initialDate,
       firstDate: firstDate,
       lastDate: lastDate,
+      helpText: 'Select your date of birth',
     );
 
     if (picked != null) {
@@ -53,6 +49,24 @@ class _RegistrationScreenState extends ConsumerState<RegistrationScreen> {
         _dateOfBirth = picked;
       });
     }
+  }
+
+  String _formatDate(DateTime date) {
+    final months = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec'
+    ];
+    return '${months[date.month - 1]} ${date.day}, ${date.year}';
   }
 
   Future<void> _handleRegistration() async {
@@ -65,14 +79,12 @@ class _RegistrationScreenState extends ConsumerState<RegistrationScreen> {
       lastName: _lastNameController.text.trim(),
       dateOfBirth: _dateOfBirth,
       gender: _selectedGender,
-      phoneNumber: _phoneController.text.trim().isEmpty
-          ? null
-          : _phoneController.text.trim(),
+      phoneNumber: null,
     );
 
     await ref.read(signUpProvider.notifier).execute(
           email: _emailController.text.trim(),
-          password: _passwordController.text,
+          password: '', // Password will be set via magic link
           profile: profile,
         );
   }
@@ -86,11 +98,12 @@ class _RegistrationScreenState extends ConsumerState<RegistrationScreen> {
         data: (_) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text('Registration successful! Please check your email.'),
+              content:
+                  Text('Account created! Please check your email to verify.'),
               backgroundColor: Colors.green,
+              duration: Duration(seconds: 4),
             ),
           );
-          // Navigate to login or home screen
         },
         error: (error, stackTrace) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -106,6 +119,10 @@ class _RegistrationScreenState extends ConsumerState<RegistrationScreen> {
 
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
         title: const Text('Create Account'),
         centerTitle: true,
       ),
@@ -117,30 +134,23 @@ class _RegistrationScreenState extends ConsumerState<RegistrationScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                // Header
-                Text(
-                  'Join Kairo',
-                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'Start your wellness journey today',
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        color: Colors.grey[600],
-                      ),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 32),
-
                 // Personal Information Section
-                Text(
-                  'Personal Information',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
+                Row(
+                  children: [
+                    Icon(
+                      Icons.person_outline,
+                      size: 20,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      'Personal Information',
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 16),
 
@@ -149,9 +159,11 @@ class _RegistrationScreenState extends ConsumerState<RegistrationScreen> {
                   controller: _firstNameController,
                   decoration: const InputDecoration(
                     labelText: 'First Name',
-                    prefixIcon: Icon(Icons.person_outline),
+                    hintText: 'Enter your first name',
+                    prefixIcon: Icon(Icons.badge_outlined),
                     border: OutlineInputBorder(),
                   ),
+                  textCapitalization: TextCapitalization.words,
                   textInputAction: TextInputAction.next,
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
@@ -167,9 +179,11 @@ class _RegistrationScreenState extends ConsumerState<RegistrationScreen> {
                   controller: _lastNameController,
                   decoration: const InputDecoration(
                     labelText: 'Last Name',
-                    prefixIcon: Icon(Icons.person_outline),
+                    hintText: 'Enter your last name',
+                    prefixIcon: Icon(Icons.badge_outlined),
                     border: OutlineInputBorder(),
                   ),
+                  textCapitalization: TextCapitalization.words,
                   textInputAction: TextInputAction.next,
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
@@ -183,20 +197,23 @@ class _RegistrationScreenState extends ConsumerState<RegistrationScreen> {
                 // Date of Birth
                 InkWell(
                   onTap: _selectDateOfBirth,
+                  borderRadius: BorderRadius.circular(4),
                   child: InputDecorator(
                     decoration: const InputDecoration(
                       labelText: 'Date of Birth',
-                      prefixIcon: Icon(Icons.calendar_today),
+                      hintText: 'Tap to select',
+                      prefixIcon: Icon(Icons.cake_outlined),
                       border: OutlineInputBorder(),
                     ),
                     child: Text(
                       _dateOfBirth != null
-                          ? '${_dateOfBirth!.day}/${_dateOfBirth!.month}/${_dateOfBirth!.year}'
-                          : 'Select your date of birth',
+                          ? _formatDate(_dateOfBirth!)
+                          : 'Tap to select your date of birth',
                       style: TextStyle(
                         color: _dateOfBirth != null
                             ? Theme.of(context).textTheme.bodyLarge?.color
                             : Colors.grey[600],
+                        fontSize: 16,
                       ),
                     ),
                   ),
@@ -207,8 +224,9 @@ class _RegistrationScreenState extends ConsumerState<RegistrationScreen> {
                 DropdownButtonFormField<String>(
                   value: _selectedGender,
                   decoration: const InputDecoration(
-                    labelText: 'Gender',
-                    prefixIcon: Icon(Icons.wc),
+                    labelText: 'Gender (Optional)',
+                    hintText: 'Select if you wish',
+                    prefixIcon: Icon(Icons.wc_outlined),
                     border: OutlineInputBorder(),
                   ),
                   items: ['Male', 'Female', 'Other', 'Prefer not to say']
@@ -223,27 +241,25 @@ class _RegistrationScreenState extends ConsumerState<RegistrationScreen> {
                     });
                   },
                 ),
-                const SizedBox(height: 16),
-
-                // Phone Number (Optional)
-                TextFormField(
-                  controller: _phoneController,
-                  decoration: const InputDecoration(
-                    labelText: 'Phone Number (Optional)',
-                    prefixIcon: Icon(Icons.phone_outlined),
-                    border: OutlineInputBorder(),
-                  ),
-                  keyboardType: TextInputType.phone,
-                  textInputAction: TextInputAction.next,
-                ),
                 const SizedBox(height: 32),
 
-                // Account Information Section
-                Text(
-                  'Account Information',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
+                // Account Section
+                Row(
+                  children: [
+                    Icon(
+                      Icons.email_outlined,
+                      size: 20,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      'Account Details',
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 16),
 
@@ -251,12 +267,13 @@ class _RegistrationScreenState extends ConsumerState<RegistrationScreen> {
                 TextFormField(
                   controller: _emailController,
                   decoration: const InputDecoration(
-                    labelText: 'Email',
+                    labelText: 'Email Address',
+                    hintText: 'you@example.com',
                     prefixIcon: Icon(Icons.email_outlined),
                     border: OutlineInputBorder(),
                   ),
                   keyboardType: TextInputType.emailAddress,
-                  textInputAction: TextInputAction.next,
+                  textInputAction: TextInputAction.done,
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
                       return 'Please enter your email';
@@ -268,81 +285,17 @@ class _RegistrationScreenState extends ConsumerState<RegistrationScreen> {
                     return null;
                   },
                 ),
-                const SizedBox(height: 16),
 
-                // Password
-                TextFormField(
-                  controller: _passwordController,
-                  decoration: InputDecoration(
-                    labelText: 'Password',
-                    prefixIcon: const Icon(Icons.lock_outline),
-                    border: const OutlineInputBorder(),
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        _obscurePassword
-                            ? Icons.visibility_outlined
-                            : Icons.visibility_off_outlined,
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          _obscurePassword = !_obscurePassword;
-                        });
-                      },
-                    ),
-                  ),
-                  obscureText: _obscurePassword,
-                  textInputAction: TextInputAction.next,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter a password';
-                    }
-                    if (value.length < 8) {
-                      return 'Password must be at least 8 characters';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 16),
-
-                // Confirm Password
-                TextFormField(
-                  controller: _confirmPasswordController,
-                  decoration: InputDecoration(
-                    labelText: 'Confirm Password',
-                    prefixIcon: const Icon(Icons.lock_outline),
-                    border: const OutlineInputBorder(),
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        _obscureConfirmPassword
-                            ? Icons.visibility_outlined
-                            : Icons.visibility_off_outlined,
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          _obscureConfirmPassword = !_obscureConfirmPassword;
-                        });
-                      },
-                    ),
-                  ),
-                  obscureText: _obscureConfirmPassword,
-                  textInputAction: TextInputAction.done,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please confirm your password';
-                    }
-                    if (value != _passwordController.text) {
-                      return 'Passwords do not match';
-                    }
-                    return null;
-                  },
-                ),
                 const SizedBox(height: 32),
 
-                // Register Button
+                // Create Account Button
                 FilledButton(
                   onPressed: signUpState.isLoading ? null : _handleRegistration,
                   style: FilledButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
                   ),
                   child: signUpState.isLoading
                       ? const SizedBox(
@@ -350,14 +303,48 @@ class _RegistrationScreenState extends ConsumerState<RegistrationScreen> {
                           width: 20,
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
+                            color: Colors.white,
                           ),
                         )
                       : const Text(
                           'Create Account',
-                          style: TextStyle(fontSize: 16),
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                 ),
                 const SizedBox(height: 16),
+
+                // Privacy & Terms
+                Text.rich(
+                  TextSpan(
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: Colors.grey[600],
+                          height: 1.5,
+                        ),
+                    children: const [
+                      TextSpan(text: 'By continuing, you agree to our\n'),
+                      TextSpan(
+                        text: 'Terms of Service',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          decoration: TextDecoration.underline,
+                        ),
+                      ),
+                      TextSpan(text: ' and '),
+                      TextSpan(
+                        text: 'Privacy Policy',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          decoration: TextDecoration.underline,
+                        ),
+                      ),
+                    ],
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 24),
 
                 // Login Link
                 Row(
@@ -369,10 +356,12 @@ class _RegistrationScreenState extends ConsumerState<RegistrationScreen> {
                     ),
                     TextButton(
                       onPressed: () {
-                        // Navigate to login screen
                         Navigator.of(context).pop();
                       },
-                      child: const Text('Sign In'),
+                      child: const Text(
+                        'Sign In',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
                     ),
                   ],
                 ),
