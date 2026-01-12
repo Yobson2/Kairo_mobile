@@ -159,7 +159,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   child: TextButton(
                     onPressed: _isLoading ? null : () {
                       // Navigate to password recovery
-                      context.push('/forgot-password');
+                      context.push('/auth/forgot-password');
                     },
                     child: const Text('Forgot Password?'),
                   ),
@@ -207,7 +207,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 // Sign Up Link
                 OutlinedButton(
                   onPressed: _isLoading ? null : () {
-                    context.push('/register');
+                    context.push('/auth/register');
                   },
                   style: OutlinedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 16),

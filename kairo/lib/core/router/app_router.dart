@@ -33,11 +33,13 @@ final routerProvider = Provider<GoRouter>((ref) {
       final isOnOnboarding = state.matchedLocation == '/onboarding';
 
       // Show splash while loading auth state
-      if (authState.isLoading && !isOnSplash) {
-        return '/splash';
+      if (authState.isLoading) {
+        return isOnSplash ? null : '/splash';
       }
 
-      // If authenticated and trying to access auth pages, redirect to dashboard
+      // Auth state has loaded - proceed with routing
+
+      // If authenticated and trying to access auth pages or splash, redirect to dashboard
       if (isAuthenticated && (isOnAuthPage || isOnSplash)) {
         final profile = ref.read(currentUserProfileProvider).value;
 
@@ -49,8 +51,13 @@ final routerProvider = Provider<GoRouter>((ref) {
         return '/dashboard';
       }
 
+      // If not authenticated and on splash, redirect to login
+      if (!isAuthenticated && isOnSplash) {
+        return '/auth/login';
+      }
+
       // If not authenticated and trying to access protected pages, redirect to login
-      if (!isAuthenticated && !isOnAuthPage && !isOnSplash && !isOnOnboarding) {
+      if (!isAuthenticated && !isOnAuthPage && !isOnOnboarding) {
         return '/auth/login';
       }
 

@@ -13,10 +13,16 @@ subprojects {
     afterEvaluate {
         if (project.hasProperty("android")) {
             android {
-                if (hasProperty('compileOptions')) {
-                    compileOptions {
-                        sourceCompatibility JavaVersion.VERSION_11
-                        targetCompatibility JavaVersion.VERSION_11
+                // Force compile options for all Android subprojects
+                compileOptions {
+                    sourceCompatibility JavaVersion.VERSION_11
+                    targetCompatibility JavaVersion.VERSION_11
+                }
+
+                // Configure Kotlin options if the plugin is applied
+                if (project.hasProperty('kotlinOptions')) {
+                    kotlinOptions {
+                        jvmTarget = "11"
                     }
                 }
             }
@@ -26,9 +32,13 @@ subprojects {
         tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
             kotlinOptions {
                 jvmTarget = "11"
-                apiVersion = "1.9"
-                languageVersion = "1.9"
             }
+        }
+
+        // Force Java compilation to target JVM 11 (compilable by any JDK >= 11)
+        tasks.withType(JavaCompile).configureEach {
+            sourceCompatibility = JavaVersion.VERSION_11.toString()
+            targetCompatibility = JavaVersion.VERSION_11.toString()
         }
     }
 }

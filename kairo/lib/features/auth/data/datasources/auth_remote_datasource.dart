@@ -148,22 +148,39 @@ class AuthRemoteDataSource {
   }
 
   /// Stream of authentication state changes
-  Stream<UserModel?> get authStateChanges {
-    return _supabase.auth.onAuthStateChange.asyncMap((data) async {
+  Stream<UserModel?> get authStateChanges async* {
+    // Immediately emit the current session state to avoid blocking on splash screen
+    final currentUser = _supabase.auth.currentUser;
+    if (currentUser != null) {
+      yield UserModel(
+        id: currentUser.id,
+        email: currentUser.email ?? '',
+        role: 'user',
+        profile: const UserProfileModel(),
+        preferences: const UserPreferencesModel(),
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
+      );
+    } else {
+      yield null;
+    }
+
+    // Then listen to auth state changes
+    await for (final data in _supabase.auth.onAuthStateChange) {
       final user = data.session?.user;
-      if (user == null) return null;
-
-      try {
-        final userData = await _supabase
-            .from('users')
-            .select()
-            .eq('id', user.id)
-            .single();
-
-        return UserModel.fromJson(userData);
-      } catch (e) {
-        return null;
+      if (user == null) {
+        yield null;
+      } else {
+        yield UserModel(
+          id: user.id,
+          email: user.email ?? '',
+          role: 'user',
+          profile: const UserProfileModel(),
+          preferences: const UserPreferencesModel(),
+          createdAt: DateTime.now(),
+          updatedAt: DateTime.now(),
+        );
       }
-    });
+    }
   }
 }

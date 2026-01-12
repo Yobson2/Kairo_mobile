@@ -32,7 +32,7 @@ class ErrorHandler {
           options.sendDefaultPii = false; // Don't send PII for privacy
 
           // Filter out sensitive data
-          options.beforeSend = (event, {hint}) {
+          options.beforeSend = (event, hint) {
             // Remove any potentially sensitive data from breadcrumbs
             if (event.breadcrumbs != null) {
               event = event.copyWith(
