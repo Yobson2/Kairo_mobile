@@ -10,7 +10,6 @@ import 'package:kairo/features/allocation/presentation/screens/enhanced_onboardi
 import 'package:kairo/features/allocation/presentation/screens/strategies_screen.dart';
 import 'package:kairo/features/allocation/presentation/screens/income_entry_screen.dart';
 import 'package:kairo/features/allocation/presentation/screens/income_history_screen.dart';
-import 'package:kairo/features/auth/presentation/screens/forgot_password_screen.dart';
 import 'package:kairo/features/auth/presentation/screens/login_screen.dart';
 import 'package:kairo/features/auth/presentation/screens/registration_screen.dart';
 import 'package:kairo/features/auth/presentation/providers/auth_providers.dart';
@@ -91,12 +90,6 @@ final routerProvider = Provider<GoRouter>((ref) {
         name: 'register',
         builder: (context, state) => const RegistrationScreen(),
       ),
-      GoRoute(
-        path: '/auth/forgot-password',
-        name: 'forgot-password',
-        builder: (context, state) => const ForgotPasswordScreen(),
-      ),
-
       // ========================================================================
       // ONBOARDING ROUTES (Protected)
       // ========================================================================

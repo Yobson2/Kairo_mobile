@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:kairo/features/auth/presentation/providers/auth_providers.dart';
 
 /// Login screen with social authentication (Story 1.2)
 class LoginScreen extends ConsumerStatefulWidget {
@@ -18,24 +19,38 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     setState(() => _isGoogleLoading = true);
 
     try {
-      // TODO: Implement Google Sign-In
-      // final signInNotifier = ref.read(signInProvider.notifier);
-      // await signInNotifier.signInWithGoogle();
+      final googleSignInNotifier = ref.read(googleSignInProvider.notifier);
+      final userExists = await googleSignInNotifier.execute();
 
-      if (mounted) {
+      if (!mounted) return;
+
+      if (userExists) {
+        // User exists - they will be redirected to dashboard by router
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Google Sign-In coming soon!'),
-            backgroundColor: Colors.blue,
+            content: Text('Welcome back!'),
+            backgroundColor: Colors.green,
+            duration: Duration(seconds: 2),
           ),
         );
+      } else {
+        // New user - redirect to registration
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Please complete your registration'),
+            backgroundColor: Colors.blue,
+            duration: Duration(seconds: 2),
+          ),
+        );
+        context.push('/auth/register');
       }
     } catch (error) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Sign-in failed: $error'),
+            content: Text('Google sign-in failed: $error'),
             backgroundColor: Colors.red,
+            duration: const Duration(seconds: 3),
           ),
         );
       }
@@ -50,24 +65,38 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     setState(() => _isAppleLoading = true);
 
     try {
-      // TODO: Implement Apple Sign-In
-      // final signInNotifier = ref.read(signInProvider.notifier);
-      // await signInNotifier.signInWithApple();
+      final appleSignInNotifier = ref.read(appleSignInProvider.notifier);
+      final userExists = await appleSignInNotifier.execute();
 
-      if (mounted) {
+      if (!mounted) return;
+
+      if (userExists) {
+        // User exists - they will be redirected to dashboard by router
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Apple Sign-In coming soon!'),
-            backgroundColor: Colors.black,
+            content: Text('Welcome back!'),
+            backgroundColor: Colors.green,
+            duration: Duration(seconds: 2),
           ),
         );
+      } else {
+        // New user - redirect to registration
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Please complete your registration'),
+            backgroundColor: Colors.blue,
+            duration: Duration(seconds: 2),
+          ),
+        );
+        context.push('/auth/register');
       }
     } catch (error) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Sign-in failed: $error'),
+            content: Text('Apple sign-in failed: $error'),
             backgroundColor: Colors.red,
+            duration: const Duration(seconds: 3),
           ),
         );
       }

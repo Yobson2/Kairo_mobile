@@ -43,6 +43,14 @@ abstract class AuthRepository {
     required String email,
   });
 
+  /// Sign in with Google
+  /// Returns existing user if email exists, null if new user needs to register
+  Future<UserEntity?> signInWithGoogle();
+
+  /// Sign in with Apple
+  /// Returns existing user if email exists, null if new user needs to register
+  Future<UserEntity?> signInWithApple();
+
   /// Stream of authentication state changes
   Stream<UserEntity?> get authStateChanges;
 }

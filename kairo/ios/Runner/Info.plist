@@ -45,5 +45,34 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+
+	<key>CFBundleURLTypes</key>
+	<array>
+		<!-- Google Sign-In URL Scheme -->
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<!-- TODO: Replace with your iOS reversed client ID from Google Console -->
+				<!-- Format: com.googleusercontent.apps.YOUR_IOS_CLIENT_ID -->
+				<string>com.googleusercontent.apps.237008246636-d8a2gldpp801vs96vmumr1kst45cndef</string>
+			</array>
+		</dict>
+		<!-- Supabase Deep Link -->
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>io.supabase.kairo</string>
+			</array>
+		</dict>
+	</array>
+
+	<!-- Google Sign-In Client ID -->
+	<!-- TODO: Replace with your iOS Client ID from Google Cloud Console -->
+	<key>GIDClientID</key>
+	<string>237008246636-d8a2gldpp801vs96vmumr1kst45cndef.apps.googleusercontent.com</string>
 </dict>
 </plist>

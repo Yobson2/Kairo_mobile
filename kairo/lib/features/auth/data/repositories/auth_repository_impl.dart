@@ -84,4 +84,16 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<void> resetPassword({required String email}) async {
     return _remoteDataSource.resetPassword(email: email);
   }
+
+  @override
+  Future<UserEntity?> signInWithGoogle() async {
+    final userModel = await _remoteDataSource.signInWithGoogle();
+    return userModel?.toEntity();
+  }
+
+  @override
+  Future<UserEntity?> signInWithApple() async {
+    final userModel = await _remoteDataSource.signInWithApple();
+    return userModel?.toEntity();
+  }
 }

@@ -1,4 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Permissions for Google Sign-In -->
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+
     <application
         android:label="kairo"
         android:name="${applicationName}"
@@ -23,6 +27,26 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+
+            <!-- Deep link for Supabase OAuth callbacks -->
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <!-- Replace with your Supabase project URL -->
+                <data
+                    android:scheme="https"
+                    android:host="zychbbvdrulanzlfoumz.supabase.co"
+                    android:pathPrefix="/auth/v1/callback" />
+            </intent-filter>
+
+            <!-- Custom scheme for local testing (optional) -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="io.supabase.kairo" />
             </intent-filter>
         </activity>
         <!-- Don't delete the meta-data below.

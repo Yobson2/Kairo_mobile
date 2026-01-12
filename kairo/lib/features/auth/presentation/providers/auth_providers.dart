@@ -94,6 +94,54 @@ class SignOut extends _$SignOut {
   }
 }
 
+/// Sign in with Google
+@riverpod
+class GoogleSignIn extends _$GoogleSignIn {
+  @override
+  FutureOr<void> build() {}
+
+  Future<bool> execute() async {
+    state = const AsyncLoading();
+
+    try {
+      final repository = ref.read(authRepositoryProvider);
+      final user = await repository.signInWithGoogle();
+
+      state = const AsyncData(null);
+
+      // Return true if user exists (logged in), false if needs registration
+      return user != null;
+    } catch (e) {
+      state = AsyncError(e, StackTrace.current);
+      rethrow;
+    }
+  }
+}
+
+/// Sign in with Apple
+@riverpod
+class AppleSignIn extends _$AppleSignIn {
+  @override
+  FutureOr<void> build() {}
+
+  Future<bool> execute() async {
+    state = const AsyncLoading();
+
+    try {
+      final repository = ref.read(authRepositoryProvider);
+      final user = await repository.signInWithApple();
+
+      state = const AsyncData(null);
+
+      // Return true if user exists (logged in), false if needs registration
+      return user != null;
+    } catch (e) {
+      state = AsyncError(e, StackTrace.current);
+      rethrow;
+    }
+  }
+}
+
 /// Provides the current user profile from Supabase profiles table
 @riverpod
 Future<Map<String, dynamic>?> currentUserProfile(CurrentUserProfileRef ref) async {

@@ -153,5 +153,39 @@ final signOutProvider =
 );
 
 typedef _$SignOut = AutoDisposeAsyncNotifier<void>;
+String _$googleSignInHash() => r'cbab630019555656d5e3856c4821395f44b415b7';
+
+/// Sign in with Google
+///
+/// Copied from [GoogleSignIn].
+@ProviderFor(GoogleSignIn)
+final googleSignInProvider =
+    AutoDisposeAsyncNotifierProvider<GoogleSignIn, void>.internal(
+  GoogleSignIn.new,
+  name: r'googleSignInProvider',
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product') ? null : _$googleSignInHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef _$GoogleSignIn = AutoDisposeAsyncNotifier<void>;
+String _$appleSignInHash() => r'04e9bda815b50d294acc0e8c9891960b107bb4fd';
+
+/// Sign in with Apple
+///
+/// Copied from [AppleSignIn].
+@ProviderFor(AppleSignIn)
+final appleSignInProvider =
+    AutoDisposeAsyncNotifierProvider<AppleSignIn, void>.internal(
+  AppleSignIn.new,
+  name: r'appleSignInProvider',
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product') ? null : _$appleSignInHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef _$AppleSignIn = AutoDisposeAsyncNotifier<void>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
