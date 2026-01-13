@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:kairo/core/theme/theme.dart';
 import 'package:kairo/features/allocation/domain/entities/allocation_strategy.dart';
 import 'package:kairo/features/allocation/domain/entities/income_entry.dart';
 import 'package:kairo/features/allocation/presentation/providers/allocation_providers.dart';
@@ -117,7 +118,7 @@ class _EditStrategyScreenState extends ConsumerState<EditStrategyScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('✅ Strategy "${updatedStrategy.name}" updated successfully!'),
-          backgroundColor: Colors.green,
+          backgroundColor: AppColors.success,
         ),
       );
 
@@ -128,7 +129,7 @@ class _EditStrategyScreenState extends ConsumerState<EditStrategyScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Error: $e'),
-          backgroundColor: Colors.red,
+          backgroundColor: AppColors.error,
         ),
       );
     } finally {
@@ -168,8 +169,8 @@ class _EditStrategyScreenState extends ConsumerState<EditStrategyScreen> {
                   // Strategy Info Card
                   Card(
                     color: widget.strategy.isActive
-                        ? Colors.green.shade50
-                        : Colors.blue.shade50,
+                        ? AppColors.success.withValues(alpha: 0.1)
+                        : AppColors.info.withValues(alpha: 0.1),
                     child: Padding(
                       padding: const EdgeInsets.all(16.0),
                       child: Row(
@@ -179,8 +180,8 @@ class _EditStrategyScreenState extends ConsumerState<EditStrategyScreen> {
                                 ? Icons.check_circle
                                 : Icons.edit,
                             color: widget.strategy.isActive
-                                ? Colors.green
-                                : Colors.blue,
+                                ? AppColors.success
+                                : AppColors.info,
                           ),
                           const SizedBox(width: 12),
                           Expanded(
@@ -238,7 +239,7 @@ class _EditStrategyScreenState extends ConsumerState<EditStrategyScreen> {
                   Text(
                     'Enter income to create a new allocation with this strategy',
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Colors.grey[600],
+                          color: AppColors.neutral600,
                         ),
                   ),
                   const SizedBox(height: 8),
@@ -323,7 +324,7 @@ class _EditStrategyScreenState extends ConsumerState<EditStrategyScreen> {
                               source.description,
                               style: TextStyle(
                                 fontSize: 12,
-                                color: Colors.grey[600],
+                                color: AppColors.neutral600,
                               ),
                             ),
                           ],
@@ -352,9 +353,7 @@ class _EditStrategyScreenState extends ConsumerState<EditStrategyScreen> {
                   ...categories.map((category) {
                     final percentage = _allocations[category.id] ?? 0.0;
                     final amount = _incomeAmount * (percentage / 100);
-                    final color = Color(
-                      int.parse(category.color.replaceFirst('#', '0xFF')),
-                    );
+                    final color = AppColors.fromHex(category.color);
 
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 16.0),
@@ -402,10 +401,10 @@ class _EditStrategyScreenState extends ConsumerState<EditStrategyScreen> {
                   Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: isValid ? Colors.green.shade50 : Colors.orange.shade50,
+                      color: isValid ? AppColors.success.withValues(alpha: 0.1) : AppColors.warning.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(
-                        color: isValid ? Colors.green : Colors.orange,
+                        color: isValid ? AppColors.success : AppColors.warning,
                         width: 2,
                       ),
                     ),
@@ -422,7 +421,7 @@ class _EditStrategyScreenState extends ConsumerState<EditStrategyScreen> {
                           '${_totalPercentage.toStringAsFixed(1)}%',
                           style: Theme.of(context).textTheme.titleLarge?.copyWith(
                                 fontWeight: FontWeight.bold,
-                                color: isValid ? Colors.green : Colors.orange,
+                                color: isValid ? AppColors.success : AppColors.warning,
                               ),
                         ),
                       ],
@@ -435,7 +434,7 @@ class _EditStrategyScreenState extends ConsumerState<EditStrategyScreen> {
                           ? 'You have ${remainingPercentage.toStringAsFixed(1)}% remaining'
                           : 'You are over by ${(-remainingPercentage).toStringAsFixed(1)}%',
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: Colors.orange.shade700,
+                            color: AppColors.neutral700,
                           ),
                       textAlign: TextAlign.center,
                     ),
@@ -449,12 +448,12 @@ class _EditStrategyScreenState extends ConsumerState<EditStrategyScreen> {
                       padding: const EdgeInsets.symmetric(vertical: 16),
                     ),
                     child: _isLoading
-                        ? const SizedBox(
+                        ? SizedBox(
                             height: 20,
                             width: 20,
                             child: CircularProgressIndicator(
                               strokeWidth: 2,
-                              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                              valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).colorScheme.onPrimary),
                             ),
                           )
                         : const Text(

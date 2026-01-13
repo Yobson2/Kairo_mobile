@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kairo/core/theme/theme.dart';
 
 /// Predefined strategy templates for quick onboarding
 /// Provides culturally-intelligent default allocations (FR3.2)
@@ -43,7 +44,7 @@ class StrategyTemplates {
     description:
         'Equal focus on all areas - family, emergencies, savings, and daily needs',
     icon: Icons.balance,
-    color: Color(0xFF3B82F6), // Blue
+    color: AppColors.info, // Blue
     allocations: {
       'Family Support': 25.0,
       'Emergencies': 20.0,
@@ -66,7 +67,7 @@ class StrategyTemplates {
     description:
         'Build wealth faster by prioritizing savings and investments',
     icon: Icons.savings,
-    color: Color(0xFF10B981), // Green
+    color: AppColors.success, // Green
     allocations: {
       'Family Support': 20.0,
       'Emergencies': 15.0,
@@ -90,7 +91,7 @@ class StrategyTemplates {
     description:
         'Build a strong safety net for variable income and unexpected expenses',
     icon: Icons.shield,
-    color: Color(0xFFF97316), // Orange
+    color: AppColors.warning, // Orange
     allocations: {
       'Family Support': 20.0,
       'Emergencies': 35.0,
@@ -114,7 +115,7 @@ class StrategyTemplates {
     description:
         'Honor family and community obligations while maintaining personal stability',
     icon: Icons.people,
-    color: Color(0xFF8B5CF6), // Purple
+    color: AppColors.secondaryPurple, // Purple
     allocations: {
       'Family Support': 35.0,
       'Emergencies': 15.0,
@@ -138,7 +139,7 @@ class StrategyTemplates {
     description:
         'Aggressive debt reduction while covering essential needs',
     icon: Icons.trending_down,
-    color: Color(0xFFEF4444), // Red
+    color: AppColors.error, // Red
     allocations: {
       'Family Support': 15.0,
       'Emergencies': 10.0,
@@ -163,7 +164,7 @@ class StrategyTemplates {
     description:
         'Minimize risk with strong emergency fund and moderate savings',
     icon: Icons.security,
-    color: Color(0xFF6B7280), // Gray
+    color: AppColors.neutral600, // Gray
     allocations: {
       'Family Support': 20.0,
       'Emergencies': 30.0,

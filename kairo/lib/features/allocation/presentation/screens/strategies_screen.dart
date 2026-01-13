@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:kairo/core/theme/theme.dart';
 import 'package:kairo/features/allocation/domain/entities/allocation_strategy.dart';
 import 'package:kairo/features/allocation/presentation/providers/allocation_providers.dart';
 import 'package:kairo/features/allocation/presentation/screens/edit_strategy_screen.dart';
@@ -56,7 +57,7 @@ class StrategiesScreen extends ConsumerWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.error_outline, size: 64, color: Colors.red),
+            const Icon(Icons.error_outline, size: 64, color: AppColors.error),
             const SizedBox(height: 16),
             Text(
               'Failed to load strategies',
@@ -90,7 +91,7 @@ class StrategiesScreen extends ConsumerWidget {
               Icon(
                 Icons.account_balance_wallet,
                 size: 64,
-                color: Colors.grey[400],
+                color: AppColors.neutral400,
               ),
               const SizedBox(height: 16),
               Text(
@@ -101,7 +102,7 @@ class StrategiesScreen extends ConsumerWidget {
               Text(
                 'Create your first allocation strategy to get started',
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Colors.grey[600],
+                      color: AppColors.neutral600,
                     ),
                 textAlign: TextAlign.center,
               ),
@@ -132,7 +133,7 @@ class StrategiesScreen extends ConsumerWidget {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text('Activated "${strategy.name}"'),
-                  backgroundColor: Colors.green,
+                  backgroundColor: AppColors.success,
                 ),
               );
             }
@@ -162,7 +163,7 @@ class StrategiesScreen extends ConsumerWidget {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Cannot delete the active strategy'),
-          backgroundColor: Colors.red,
+          backgroundColor: AppColors.error,
         ),
       );
       return;
@@ -192,13 +193,13 @@ class StrategiesScreen extends ConsumerWidget {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text('${strategy.name} deleted'),
-                    backgroundColor: Colors.green,
+                    backgroundColor: AppColors.success,
                   ),
                 );
               }
             },
             style: FilledButton.styleFrom(
-              backgroundColor: Colors.red,
+              backgroundColor: AppColors.error,
             ),
             child: const Text('Delete'),
           ),
@@ -297,7 +298,7 @@ class _StrategyCard extends StatelessWidget {
                             ? 'Template strategy'
                             : 'Custom strategy',
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: Colors.grey[600],
+                              color: AppColors.neutral600,
                             ),
                       ),
                     ],
@@ -344,9 +345,9 @@ class _StrategyCard extends StatelessWidget {
                         value: 'delete',
                         child: Row(
                           children: [
-                            Icon(Icons.delete, size: 20, color: Colors.red),
+                            Icon(Icons.delete, size: 20, color: AppColors.error),
                             SizedBox(width: 8),
-                            Text('Delete', style: TextStyle(color: Colors.red)),
+                            Text('Delete', style: TextStyle(color: AppColors.error)),
                           ],
                         ),
                       ),
@@ -398,7 +399,7 @@ class _StrategyCard extends StatelessWidget {
                   '${strategy.totalPercentage.toStringAsFixed(0)}%',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: strategy.isValid ? Colors.green : Colors.red,
+                        color: strategy.isValid ? AppColors.success : AppColors.error,
                       ),
                 ),
               ],

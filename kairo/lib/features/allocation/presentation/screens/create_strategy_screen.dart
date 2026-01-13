@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:kairo/core/components/components.dart';
+import 'package:kairo/core/theme/theme.dart';
+import 'package:kairo/core/utils/utils.dart';
 import 'package:kairo/features/allocation/domain/entities/allocation_strategy.dart';
 import 'package:kairo/features/allocation/domain/entities/income_entry.dart';
 import 'package:kairo/features/allocation/presentation/providers/allocation_providers.dart';
@@ -71,12 +74,7 @@ class _CreateStrategyScreenState extends ConsumerState<CreateStrategyScreen> {
     final currentUser = await ref.read(currentUserProvider.future);
     if (currentUser == null) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please sign in first'),
-          backgroundColor: Colors.red,
-        ),
-      );
+      context.showErrorSnackBar('Please sign in first');
       return;
     }
 
@@ -141,27 +139,17 @@ class _CreateStrategyScreenState extends ConsumerState<CreateStrategyScreen> {
 
       if (!mounted) return;
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            isFirstStrategy
-                ? '✅ Strategy "${strategy.name}" created and activated!'
-                : '✅ Strategy "${strategy.name}" created successfully!',
-          ),
-          backgroundColor: Colors.green,
-        ),
+      context.showSuccessSnackBar(
+        isFirstStrategy
+            ? '✅ Strategy "${strategy.name}" created and activated!'
+            : '✅ Strategy "${strategy.name}" created successfully!',
       );
 
       // Navigate back to dashboard or strategies screen
       context.go('/dashboard');
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Error: $e'),
-          backgroundColor: Colors.red,
-        ),
-      );
+      context.showErrorSnackBar('Error: $e');
     } finally {
       if (mounted) {
         setState(() => _isLoading = false);
@@ -182,83 +170,58 @@ class _CreateStrategyScreenState extends ConsumerState<CreateStrategyScreen> {
       ),
       body: categoriesAsync.when(
         data: (categories) => SingleChildScrollView(
-          padding: const EdgeInsets.all(24.0),
+          padding: const EdgeInsets.all(AppSizes.paddingLarge),
           child: Form(
             key: _formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 // Strategy Name
-                Text(
-                  'Strategy Name',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
+                SectionHeader(
+                  icon: Icons.label,
+                  title: 'Strategy Name',
                 ),
-                const SizedBox(height: 8),
-                TextFormField(
+                const SizedBox(height: AppSizes.paddingSmall),
+                AppTextField(
                   controller: _strategyNameController,
-                  decoration: const InputDecoration(
-                    hintText: 'e.g., Regular Month, Tight Month, Bonus Month',
-                    border: OutlineInputBorder(),
-                    prefixIcon: Icon(Icons.label),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.trim().isEmpty) {
+                  hint: 'e.g., Regular Month, Tight Month, Bonus Month',
+                  prefixIcon: Icons.label,
+                  validator: (v) {
+                    if (v == null || v.trim().isEmpty) {
                       return 'Please enter a strategy name';
                     }
-                    if (value.trim().length > 50) {
+                    if (v.trim().length > 50) {
                       return 'Name must be 50 characters or less';
                     }
                     return null;
                   },
                   enabled: !_isLoading,
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: AppSizes.paddingLarge),
 
                 // Income Entry
-                Text(
-                  'Expected Income',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
+                SectionHeader(
+                  icon: Icons.attach_money,
+                  title: 'Expected Income',
                 ),
-                const SizedBox(height: 8),
-                TextFormField(
+                const SizedBox(height: AppSizes.paddingSmall),
+                AppTextField(
                   controller: _incomeController,
+                  hint: 'Enter amount',
+                  prefixIcon: Icons.attach_money,
                   keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                  decoration: const InputDecoration(
-                    hintText: 'Enter amount',
-                    border: OutlineInputBorder(),
-                    prefixIcon: Icon(Icons.attach_money),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return 'Please enter income amount';
-                    }
-                    final amount = double.tryParse(value);
-                    if (amount == null || amount <= 0) {
-                      return 'Please enter a valid amount';
-                    }
-                    return null;
-                  },
-                  onChanged: (value) {
-                    setState(() {
-                      _incomeAmount = double.tryParse(value) ?? 0.0;
-                    });
-                  },
+                  validator: AppValidators.positiveNumber,
+                  onChanged: (value) => setState(() => _incomeAmount = double.tryParse(value) ?? 0.0),
                   enabled: !_isLoading,
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: AppSizes.paddingMedium),
 
                 // Income Type
-                Text(
-                  'Income Type',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
+                SectionHeader(
+                  icon: Icons.trending_up,
+                  title: 'Income Type',
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: AppSizes.paddingSmall),
                 SegmentedButton<IncomeType>(
                   segments: const [
                     ButtonSegment(
@@ -284,16 +247,14 @@ class _CreateStrategyScreenState extends ConsumerState<CreateStrategyScreen> {
                           setState(() => _selectedIncomeType = selected.first);
                         },
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: AppSizes.paddingLarge),
 
                 // Income Source (FR13)
-                Text(
-                  'Income Source',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
+                SectionHeader(
+                  icon: Icons.account_balance_wallet,
+                  title: 'Income Source',
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: AppSizes.paddingSmall),
                 DropdownButtonFormField<IncomeSource>(
                   value: _selectedIncomeSource,
                   decoration: const InputDecoration(
@@ -315,7 +276,7 @@ class _CreateStrategyScreenState extends ConsumerState<CreateStrategyScreen> {
                             source.description,
                             style: TextStyle(
                               fontSize: 12,
-                              color: Colors.grey[600],
+                              color: AppColors.neutral600,
                             ),
                           ),
                         ],
@@ -330,42 +291,36 @@ class _CreateStrategyScreenState extends ConsumerState<CreateStrategyScreen> {
                           }
                         },
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: AppSizes.paddingLarge),
 
                 // Strategy Templates
-                Text(
-                  'Quick Start Template (Optional)',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
+                SectionHeader(
+                  icon: Icons.dashboard_customize,
+                  title: 'Quick Start Template (Optional)',
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: AppSizes.paddingSmall),
                 StrategyTemplateSelector(
                   selectedTemplate: _selectedTemplate,
                   onTemplateSelected: (template) {
                     if (!_isLoading) _applyTemplate(template);
                   },
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: AppSizes.paddingLarge),
 
                 // Allocation Sliders
-                Text(
-                  'Allocation Breakdown',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
+                SectionHeader(
+                  icon: Icons.pie_chart,
+                  title: 'Allocation Breakdown',
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: AppSizes.paddingSmall),
 
                 ...categories.map((category) {
                   final percentage = _allocations[category.name] ?? 0.0;
                   final amount = _incomeAmount * (percentage / 100);
-                  final color = Color(
-                    int.parse(category.color.replaceFirst('#', '0xFF')),
-                  );
+                  final color = AppColors.fromHex(category.color);
 
                   return Padding(
-                    padding: const EdgeInsets.only(bottom: 16.0),
+                    padding: const EdgeInsets.only(bottom: AppSizes.paddingMedium),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -402,16 +357,16 @@ class _CreateStrategyScreenState extends ConsumerState<CreateStrategyScreen> {
                   );
                 }),
 
-                const SizedBox(height: 16),
+                const SizedBox(height: AppSizes.paddingMedium),
 
                 // Total Indicator
                 Container(
-                  padding: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(AppSizes.paddingMedium),
                   decoration: BoxDecoration(
-                    color: isValid ? Colors.green.shade50 : Colors.orange.shade50,
-                    borderRadius: BorderRadius.circular(8),
+                    color: isValid ? AppColors.successLight.withValues(alpha: 0.3) : AppColors.warningLight.withValues(alpha: 0.3),
+                    borderRadius: BorderRadius.circular(AppSizes.borderRadiusSmall),
                     border: Border.all(
-                      color: isValid ? Colors.green : Colors.orange,
+                      color: isValid ? AppColors.success : AppColors.warning,
                       width: 2,
                     ),
                   ),
@@ -428,53 +383,41 @@ class _CreateStrategyScreenState extends ConsumerState<CreateStrategyScreen> {
                         '${_totalPercentage.toStringAsFixed(1)}%',
                         style: Theme.of(context).textTheme.titleLarge?.copyWith(
                               fontWeight: FontWeight.bold,
-                              color: isValid ? Colors.green : Colors.orange,
+                              color: isValid ? AppColors.success : AppColors.warning,
                             ),
                       ),
                     ],
                   ),
                 ),
                 if (!isValid) ...[
-                  const SizedBox(height: 8),
+                  const SizedBox(height: AppSizes.paddingSmall),
                   Text(
                     remainingPercentage > 0
                         ? 'You have ${remainingPercentage.toStringAsFixed(1)}% remaining'
                         : 'You are over by ${(-remainingPercentage).toStringAsFixed(1)}%',
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Colors.orange.shade700,
+                          color: AppColors.warningDark,
                         ),
                     textAlign: TextAlign.center,
                   ),
                 ],
-                const SizedBox(height: 24),
+                const SizedBox(height: AppSizes.paddingLarge),
 
                 // Save Button
-                FilledButton(
+                AppButton.primary(
                   onPressed: isValid && !_isLoading ? _saveStrategy : null,
-                  style: FilledButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                  ),
-                  child: _isLoading
-                      ? const SizedBox(
-                          height: 20,
-                          width: 20,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                          ),
-                        )
-                      : const Text(
-                          'Create Strategy',
-                          style: TextStyle(fontSize: 16),
-                        ),
+                  label: 'Create Strategy',
+                  icon: Icons.save,
+                  isLoading: _isLoading,
+                  isFullWidth: true,
                 ),
               ],
             ),
           ),
         ),
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stack) => Center(
-          child: Text('Error loading categories: $error'),
+        loading: () => const LoadingIndicator(),
+        error: (error, stack) => ErrorView.generic(
+          message: 'Error loading categories: $error',
         ),
       ),
     );

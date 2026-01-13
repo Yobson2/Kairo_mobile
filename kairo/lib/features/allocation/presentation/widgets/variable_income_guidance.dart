@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:kairo/core/theme/theme.dart';
 import 'package:kairo/features/allocation/domain/entities/income_entry.dart';
 
 /// Variable income guidance widget providing contextual tips
@@ -91,7 +92,7 @@ class _VariableIncomeGuidanceState
         tips.add(GuidanceTip(
           id: 'low_variability',
           icon: Icons.check_circle,
-          iconColor: Colors.green,
+          iconColor: AppColors.success,
           title: 'Your income is stable',
           message:
               'Great! Your income has been consistent. Consider increasing your savings allocation.',
@@ -102,7 +103,7 @@ class _VariableIncomeGuidanceState
         tips.add(GuidanceTip(
           id: 'moderate_variability',
           icon: Icons.trending_up,
-          iconColor: Colors.orange,
+          iconColor: AppColors.warning,
           title: 'Some variation detected',
           message:
               'Your income varies a bit. Keep at least 15-20% in emergencies for buffer months.',
@@ -114,7 +115,7 @@ class _VariableIncomeGuidanceState
         tips.add(GuidanceTip(
           id: 'high_variability',
           icon: Icons.warning_amber,
-          iconColor: Colors.red,
+          iconColor: AppColors.error,
           title: 'Income varies significantly',
           message:
               'Build a strong emergency buffer (20-30%) to handle low-income months comfortably.',
@@ -125,7 +126,7 @@ class _VariableIncomeGuidanceState
         tips.add(GuidanceTip(
           id: 'not_enough_data',
           icon: Icons.info_outline,
-          iconColor: Colors.blue,
+          iconColor: AppColors.info,
           title: 'Still learning your pattern',
           message:
               'Add more income entries so we can give you personalized advice.',
@@ -146,7 +147,7 @@ class _VariableIncomeGuidanceState
         tips.add(GuidanceTip(
           id: 'increasing_trend',
           icon: Icons.trending_up,
-          iconColor: Colors.green,
+          iconColor: AppColors.success,
           title: 'Income is growing!',
           message:
               'Your income has increased for 3 months. Consider allocating the extra to savings.',
@@ -156,7 +157,7 @@ class _VariableIncomeGuidanceState
         tips.add(GuidanceTip(
           id: 'decreasing_trend',
           icon: Icons.trending_down,
-          iconColor: Colors.orange,
+          iconColor: AppColors.warning,
           title: 'Income has decreased',
           message:
               'Your income has dropped recently. Consider using "This month is different" to adjust.',
@@ -172,7 +173,7 @@ class _VariableIncomeGuidanceState
       tips.add(GuidanceTip(
         id: 'variable_income_intro',
         icon: Icons.lightbulb_outline,
-        iconColor: Colors.amber,
+        iconColor: AppColors.warningLight,
         title: 'Managing variable income',
         message:
             'Your income changes month to month. Allocate based on your lowest expected month, not your highest.',
@@ -231,7 +232,7 @@ class _VariabilityIndicator extends StatelessWidget {
                 Text(
                   'Income Variability',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Colors.grey[600],
+                        color: AppColors.neutral600,
                       ),
                 ),
                 const SizedBox(height: 4),
@@ -256,7 +257,7 @@ class _VariabilityIndicator extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: isActive
                       ? config.color
-                      : Colors.grey.withValues(alpha: 0.2),
+                      : AppColors.neutral200,
                   borderRadius: BorderRadius.circular(3),
                 ),
               );
@@ -272,35 +273,35 @@ class _VariabilityIndicator extends StatelessWidget {
       case IncomeVariability.low:
         return _VariabilityConfig(
           label: 'Low (Stable)',
-          color: Colors.green,
+          color: AppColors.success,
           icon: Icons.show_chart,
           barCount: 1,
         );
       case IncomeVariability.moderate:
         return _VariabilityConfig(
           label: 'Moderate',
-          color: Colors.orange,
+          color: AppColors.warning,
           icon: Icons.trending_up,
           barCount: 2,
         );
       case IncomeVariability.high:
         return _VariabilityConfig(
           label: 'High',
-          color: Colors.deepOrange,
+          color: AppColors.categoryOrange,
           icon: Icons.waterfall_chart,
           barCount: 3,
         );
       case IncomeVariability.veryHigh:
         return _VariabilityConfig(
           label: 'Very High',
-          color: Colors.red,
+          color: AppColors.error,
           icon: Icons.ssid_chart,
           barCount: 4,
         );
       case IncomeVariability.unknown:
         return _VariabilityConfig(
           label: 'Unknown',
-          color: Colors.grey,
+          color: AppColors.neutral500,
           icon: Icons.help_outline,
           barCount: 0,
         );
@@ -352,7 +353,7 @@ class _GuidanceTipCard extends StatelessWidget {
                     Text(
                       tip.message,
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: Colors.grey[700],
+                            color: AppColors.neutral700,
                           ),
                     ),
                   ],
@@ -388,26 +389,26 @@ class _GuidanceTipCard extends StatelessWidget {
   Color _getBackgroundColor() {
     switch (tip.type) {
       case TipType.positive:
-        return Colors.green.withValues(alpha: 0.1);
+        return AppColors.success.withValues(alpha: 0.1);
       case TipType.suggestion:
-        return Colors.blue.withValues(alpha: 0.1);
+        return AppColors.info.withValues(alpha: 0.1);
       case TipType.important:
-        return Colors.orange.withValues(alpha: 0.1);
+        return AppColors.warning.withValues(alpha: 0.1);
       case TipType.info:
-        return Colors.grey.withValues(alpha: 0.1);
+        return AppColors.neutral100;
     }
   }
 
   Color _getBorderColor() {
     switch (tip.type) {
       case TipType.positive:
-        return Colors.green.withValues(alpha: 0.3);
+        return AppColors.success.withValues(alpha: 0.3);
       case TipType.suggestion:
-        return Colors.blue.withValues(alpha: 0.3);
+        return AppColors.info.withValues(alpha: 0.3);
       case TipType.important:
-        return Colors.orange.withValues(alpha: 0.3);
+        return AppColors.warning.withValues(alpha: 0.3);
       case TipType.info:
-        return Colors.grey.withValues(alpha: 0.3);
+        return AppColors.neutral300;
     }
   }
 }

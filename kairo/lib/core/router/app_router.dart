@@ -13,6 +13,8 @@ import 'package:kairo/features/allocation/presentation/screens/income_history_sc
 import 'package:kairo/features/auth/presentation/screens/login_screen.dart';
 import 'package:kairo/features/auth/presentation/screens/registration_screen.dart';
 import 'package:kairo/features/auth/presentation/providers/auth_providers.dart';
+import 'package:kairo/features/commun/presentation/screens/error_screen.dart';
+import 'package:kairo/features/commun/presentation/screens/splash_screen.dart';
 import 'package:kairo/features/settings/presentation/screens/settings_screen.dart';
 
 /// Router configuration for the Kairo app
@@ -186,113 +188,3 @@ final routerProvider = Provider<GoRouter>((ref) {
     ),
   );
 });
-
-// ============================================================================
-// SPLASH SCREEN
-// ============================================================================
-
-class SplashScreen extends ConsumerStatefulWidget {
-  const SplashScreen({super.key});
-
-  @override
-  ConsumerState<SplashScreen> createState() => _SplashScreenState();
-}
-
-class _SplashScreenState extends ConsumerState<SplashScreen> {
-  @override
-  void initState() {
-    super.initState();
-    _startSplashTimer();
-  }
-
-  void _startSplashTimer() {
-    Future.delayed(const Duration(seconds: 3), () {
-      if (mounted) {
-        // Navigate away from splash by triggering router refresh
-        ref.read(routerProvider).refresh();
-      }
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.account_balance_wallet,
-              size: 80,
-              color: Theme.of(context).colorScheme.primary,
-            ),
-            const SizedBox(height: 24),
-            Text(
-              'Kairo',
-              style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Allocate with intention, live with clarity',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Colors.grey[600],
-                  ),
-            ),
-            const SizedBox(height: 48),
-            const CircularProgressIndicator(),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-// ============================================================================
-// ERROR SCREEN
-// ============================================================================
-
-class ErrorScreen extends StatelessWidget {
-  final String message;
-
-  const ErrorScreen({super.key, required this.message});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Error'),
-      ),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(
-                Icons.error_outline,
-                size: 64,
-                color: Colors.red,
-              ),
-              const SizedBox(height: 24),
-              Text(
-                message,
-                style: Theme.of(context).textTheme.titleLarge,
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 32),
-              FilledButton.icon(
-                onPressed: () {
-                  context.go('/dashboard');
-                },
-                icon: const Icon(Icons.home),
-                label: const Text('Go to Dashboard'),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kairo/core/theme/theme.dart';
 
 /// Strategy template data class
 class StrategyTemplate {
@@ -97,7 +98,7 @@ class StrategyTemplateSelector extends StatelessWidget {
         Text(
           'Select a template or customize your own',
           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Colors.grey[600],
+                color: AppColors.neutral600,
               ),
         ),
         const SizedBox(height: 16),
@@ -157,7 +158,7 @@ class _TemplateCard extends StatelessWidget {
         side: BorderSide(
           color: isSelected
               ? Theme.of(context).colorScheme.primary
-              : Colors.transparent,
+              : AppColors.divider,
           width: 2,
         ),
       ),
@@ -176,14 +177,14 @@ class _TemplateCard extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: isSelected
                           ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.1)
-                          : Colors.grey.withValues(alpha: 0.1),
+                          : AppColors.neutral100,
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Icon(
                       icon,
                       color: isSelected
                           ? Theme.of(context).colorScheme.primary
-                          : Colors.grey[600],
+                          : AppColors.neutral600,
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -206,7 +207,7 @@ class _TemplateCard extends StatelessWidget {
                           description,
                           style:
                               Theme.of(context).textTheme.bodySmall?.copyWith(
-                                    color: Colors.grey[600],
+                                    color: AppColors.neutral600,
                                   ),
                         ),
                       ],

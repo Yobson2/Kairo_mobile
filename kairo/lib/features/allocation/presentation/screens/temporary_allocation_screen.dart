@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:kairo/core/theme/theme.dart';
 import 'package:kairo/features/allocation/domain/entities/allocation_category.dart';
 import 'package:kairo/features/allocation/presentation/providers/allocation_providers.dart';
 
@@ -60,7 +61,7 @@ class _TemporaryAllocationScreenState
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Error loading allocations: $e'),
-            backgroundColor: Colors.red,
+            backgroundColor: AppColors.error,
           ),
         );
         context.pop();
@@ -115,7 +116,7 @@ class _TemporaryAllocationScreenState
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('No changes to save'),
-          backgroundColor: Colors.orange,
+          backgroundColor: AppColors.warning,
         ),
       );
       return;
@@ -125,7 +126,7 @@ class _TemporaryAllocationScreenState
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Total must equal 100%'),
-          backgroundColor: Colors.red,
+          backgroundColor: AppColors.error,
         ),
       );
       return;
@@ -140,7 +141,7 @@ class _TemporaryAllocationScreenState
             content: Text(
               '✅ Temporary allocation saved! Will revert on ${_expiryDate.toString().split(' ')[0]}',
             ),
-            backgroundColor: Colors.green,
+            backgroundColor: AppColors.success,
           ),
         );
         context.pop();
@@ -150,7 +151,7 @@ class _TemporaryAllocationScreenState
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Error saving: $e'),
-            backgroundColor: Colors.red,
+            backgroundColor: AppColors.error,
           ),
         );
       }
@@ -159,9 +160,9 @@ class _TemporaryAllocationScreenState
 
   Color _parseColor(String colorHex) {
     try {
-      return Color(int.parse(colorHex.replaceFirst('#', '0xFF')));
+      return AppColors.fromHex(colorHex);
     } catch (e) {
-      return Colors.grey;
+      return AppColors.neutral500;
     }
   }
 
@@ -196,8 +197,8 @@ class _TemporaryAllocationScreenState
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  Colors.blue.shade50,
-                  Colors.blue.shade100,
+                  AppColors.info.withValues(alpha: 0.1),
+                  AppColors.info.withValues(alpha: 0.2),
                 ],
               ),
             ),
@@ -206,7 +207,7 @@ class _TemporaryAllocationScreenState
               children: [
                 Row(
                   children: [
-                    Icon(Icons.info_outline, color: Colors.blue.shade700),
+                    Icon(Icons.info_outline, color: AppColors.info),
                     const SizedBox(width: 12),
                     Expanded(
                       child: Text(
@@ -214,7 +215,7 @@ class _TemporaryAllocationScreenState
                         style:
                             Theme.of(context).textTheme.titleMedium?.copyWith(
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.blue.shade900,
+                                  color: AppColors.info,
                                 ),
                       ),
                     ),
@@ -224,19 +225,19 @@ class _TemporaryAllocationScreenState
                 Text(
                   'Adjust your allocations just for this month. Your regular strategy will automatically resume next month.',
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Colors.blue.shade900,
+                        color: AppColors.info,
                       ),
                 ),
                 const SizedBox(height: 12),
                 Row(
                   children: [
-                    Icon(Icons.schedule, size: 16, color: Colors.blue.shade700),
+                    Icon(Icons.schedule, size: 16, color: AppColors.info),
                     const SizedBox(width: 8),
                     Text(
                       'Auto-reverts: ${_expiryDate.toString().split(' ')[0]}',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
                             fontWeight: FontWeight.w600,
-                            color: Colors.blue.shade700,
+                            color: AppColors.info,
                           ),
                     ),
                     const Spacer(),
@@ -288,11 +289,11 @@ class _TemporaryAllocationScreenState
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
                     color: _isValid
-                        ? Colors.green.withValues(alpha: 0.1)
-                        : Colors.orange.withValues(alpha: 0.1),
+                        ? AppColors.success.withValues(alpha: 0.1)
+                        : AppColors.warning.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: _isValid ? Colors.green : Colors.orange,
+                      color: _isValid ? AppColors.success : AppColors.warning,
                       width: 2,
                     ),
                   ),
@@ -317,7 +318,7 @@ class _TemporaryAllocationScreenState
                                 .headlineSmall
                                 ?.copyWith(
                                   fontWeight: FontWeight.bold,
-                                  color: _isValid ? Colors.green : Colors.orange,
+                                  color: _isValid ? AppColors.success : AppColors.warning,
                                 ),
                           ),
                         ],
@@ -330,7 +331,7 @@ class _TemporaryAllocationScreenState
                               : '${remainingPercentage.abs().toStringAsFixed(0)}% over',
                           style:
                               Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                    color: Colors.orange[700],
+                                    color: AppColors.warning,
                                     fontWeight: FontWeight.w500,
                                   ),
                         ),
@@ -350,7 +351,7 @@ class _TemporaryAllocationScreenState
               color: Theme.of(context).colorScheme.surface,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.05),
+                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.05),
                   blurRadius: 10,
                   offset: const Offset(0, -5),
                 ),
@@ -447,7 +448,7 @@ class _TempAllocationCard extends StatelessWidget {
                           'Was: ${item.originalPercentage.toStringAsFixed(0)}%',
                           style:
                               Theme.of(context).textTheme.bodySmall?.copyWith(
-                                    color: Colors.grey[600],
+                                    color: AppColors.neutral600,
                                     decoration: TextDecoration.lineThrough,
                                   ),
                         ),

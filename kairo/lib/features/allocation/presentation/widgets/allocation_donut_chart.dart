@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import 'package:kairo/core/theme/theme.dart';
 import 'package:kairo/features/allocation/domain/entities/allocation_category.dart';
 
 /// Donut chart visualization for allocation breakdown (FR8)
@@ -39,7 +40,7 @@ class AllocationDonutChart extends StatelessWidget {
                     Text(
                       _getCurrencySymbol(currency),
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Colors.grey[600],
+                            color: AppColors.neutral600,
                           ),
                     ),
                     Text(
@@ -51,7 +52,7 @@ class AllocationDonutChart extends StatelessWidget {
                     Text(
                       'Allocated',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Colors.grey[600],
+                            color: AppColors.neutral600,
                           ),
                     ),
                   ],
@@ -189,7 +190,7 @@ class _LegendItem extends StatelessWidget {
             Text(
               '${percentage.toStringAsFixed(0)}% · ${_getCurrencySymbol(currency)}${amount.toStringAsFixed(0)}',
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Colors.grey[600],
+                    color: AppColors.neutral600,
                   ),
             ),
           ],

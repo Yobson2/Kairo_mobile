@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:kairo/core/theme/theme.dart';
 import 'package:kairo/features/allocation/domain/entities/allocation_strategy.dart';
 import 'package:kairo/features/allocation/presentation/providers/allocation_providers.dart';
 import 'package:kairo/features/auth/presentation/providers/auth_providers.dart';
@@ -68,10 +69,10 @@ class StrategyActions {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('✨ Created "${newName}"'),
-            backgroundColor: Colors.green,
+            backgroundColor: AppColors.success,
             action: SnackBarAction(
               label: 'View',
-              textColor: Colors.white,
+              textColor: AppColors.backgroundLight,
               onPressed: () {
                 // TODO: Navigate to duplicate strategy
               },
@@ -87,7 +88,7 @@ class StrategyActions {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Error duplicating strategy: $e'),
-            backgroundColor: Colors.red,
+            backgroundColor: AppColors.error,
           ),
         );
       }
@@ -103,9 +104,9 @@ class StrategyActions {
     // Prevent deleting active strategy
     if (strategy.isActive) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Cannot delete active strategy. Switch to another first.'),
-          backgroundColor: Colors.orange,
+        SnackBar(
+          content: const Text('Cannot delete active strategy. Switch to another first.'),
+          backgroundColor: AppColors.warning,
         ),
       );
       return;
@@ -127,7 +128,7 @@ class StrategyActions {
           FilledButton(
             onPressed: () => Navigator.pop(context, true),
             style: FilledButton.styleFrom(
-              backgroundColor: Colors.red,
+              backgroundColor: AppColors.error,
             ),
             child: const Text('Delete'),
           ),
@@ -144,7 +145,7 @@ class StrategyActions {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Deleted "${strategy.name}"'),
-            backgroundColor: Colors.green,
+            backgroundColor: AppColors.success,
           ),
         );
       }
@@ -156,7 +157,7 @@ class StrategyActions {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Error deleting strategy: $e'),
-            backgroundColor: Colors.red,
+            backgroundColor: AppColors.error,
           ),
         );
       }
@@ -198,7 +199,7 @@ class _StrategyActionsSheet extends StatelessWidget {
             width: 40,
             height: 4,
             decoration: BoxDecoration(
-              color: Colors.grey[300],
+              color: AppColors.neutral300,
               borderRadius: BorderRadius.circular(2),
             ),
           ),
@@ -221,7 +222,7 @@ class _StrategyActionsSheet extends StatelessWidget {
                       Text(
                         'Active Strategy',
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: Colors.green,
+                              color: AppColors.success,
                               fontWeight: FontWeight.w600,
                             ),
                       ),
@@ -301,12 +302,12 @@ class _ActionButton extends StatelessWidget {
     return ListTile(
       leading: Icon(
         icon,
-        color: isDestructive ? Colors.red : null,
+        color: isDestructive ? AppColors.error : null,
       ),
       title: Text(
         label,
         style: TextStyle(
-          color: isDestructive ? Colors.red : null,
+          color: isDestructive ? AppColors.error : null,
           fontWeight: FontWeight.w600,
         ),
       ),
@@ -364,7 +365,7 @@ class _DuplicateStrategyDialogState extends State<_DuplicateStrategyDialog> {
           Text(
             'Give your duplicate strategy a name',
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Colors.grey[600],
+                  color: AppColors.neutral600,
                 ),
           ),
           const SizedBox(height: 16),
@@ -457,13 +458,13 @@ class StrategyMenuButton extends ConsumerWidget {
           ),
         ),
         if (!strategy.isActive)
-          const PopupMenuItem(
+          PopupMenuItem(
             value: 'delete',
             child: Row(
               children: [
-                Icon(Icons.delete_outline, color: Colors.red),
-                SizedBox(width: 12),
-                Text('Delete', style: TextStyle(color: Colors.red)),
+                Icon(Icons.delete_outline, color: AppColors.error),
+                const SizedBox(width: 12),
+                Text('Delete', style: TextStyle(color: AppColors.error)),
               ],
             ),
           ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:kairo/core/theme/theme.dart';
 import 'package:kairo/features/allocation/domain/entities/allocation_category.dart';
 import 'package:kairo/features/allocation/domain/entities/allocation_strategy.dart';
 import 'package:kairo/features/allocation/presentation/providers/allocation_providers.dart';
@@ -118,10 +119,10 @@ class _StrategySwitcherState extends ConsumerState<StrategySwitcher> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('✨ Switched to "${newStrategy.name}"'),
-            backgroundColor: Colors.green,
+            backgroundColor: AppColors.success,
             action: SnackBarAction(
               label: 'Undo',
-              textColor: Colors.white,
+              textColor: AppColors.backgroundLight,
               onPressed: () {
                 // TODO: Implement undo functionality
               },
@@ -137,7 +138,7 @@ class _StrategySwitcherState extends ConsumerState<StrategySwitcher> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Error switching strategy: $e'),
-            backgroundColor: Colors.red,
+            backgroundColor: AppColors.error,
           ),
         );
       }
@@ -190,7 +191,7 @@ class _ActiveStrategyCard extends StatelessWidget {
                     Text(
                       'Active Strategy',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Colors.grey[600],
+                            color: AppColors.neutral600,
                             fontWeight: FontWeight.w600,
                           ),
                     ),
@@ -204,7 +205,7 @@ class _ActiveStrategyCard extends StatelessWidget {
                     Text(
                       '${strategy.allocations.length} categories allocated',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Colors.grey[600],
+                            color: AppColors.neutral600,
                           ),
                     ),
                   ],
@@ -278,7 +279,7 @@ class _StrategyListItem extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Colors.grey.withValues(alpha: 0.1),
+                  color: AppColors.neutral100,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: const Icon(
@@ -362,9 +363,9 @@ class _AllocationPreview extends StatelessWidget {
 
   Color _parseColor(String colorHex) {
     try {
-      return Color(int.parse(colorHex.replaceFirst('#', '0xFF')));
+      return AppColors.fromHex(colorHex);
     } catch (e) {
-      return Colors.grey;
+      return AppColors.neutral500;
     }
   }
 }
@@ -394,7 +395,7 @@ class StrategyBottomSheet extends ConsumerWidget {
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: Colors.grey[300],
+                color: AppColors.neutral300,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -412,7 +413,7 @@ class StrategyBottomSheet extends ConsumerWidget {
           Text(
             'Choose which allocation strategy to use',
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Colors.grey[600],
+                  color: AppColors.neutral600,
                 ),
           ),
           const SizedBox(height: 24),
@@ -468,7 +469,7 @@ class _BottomSheetStrategyItem extends StatelessWidget {
         strategy.isActive ? Icons.check_circle : Icons.circle_outlined,
         color: strategy.isActive
             ? Theme.of(context).colorScheme.primary
-            : Colors.grey,
+            : AppColors.neutral500,
       ),
       title: Text(
         strategy.name,
@@ -507,7 +508,7 @@ void showStrategySwitcher(BuildContext context) {
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
-    backgroundColor: Colors.transparent,
+    backgroundColor: AppColors.overlayHeavy,
     builder: (context) => const StrategyBottomSheet(),
   );
 }

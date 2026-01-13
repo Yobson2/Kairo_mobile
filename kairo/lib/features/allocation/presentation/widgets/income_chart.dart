@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import 'package:kairo/core/theme/theme.dart';
 import 'package:kairo/features/allocation/domain/entities/income_entry.dart';
 
 /// Income visualization chart for history tracking (FR4.1)
@@ -128,7 +129,7 @@ class _LineChart extends StatelessWidget {
               Text(
                 _formatAmount(maxValue, currency),
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Colors.grey[600],
+                      color: AppColors.neutral600,
                     ),
               ),
               const Spacer(),
@@ -136,7 +137,7 @@ class _LineChart extends StatelessWidget {
               Text(
                 _formatAmount(minValue, currency),
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Colors.grey[600],
+                      color: AppColors.neutral600,
                     ),
               ),
             ],
@@ -252,7 +253,7 @@ class _LineChartPainter extends CustomPainter {
     for (final point in points) {
       canvas.drawCircle(point, 6, dotPaint);
       canvas.drawCircle(
-          point, 6, Paint()..color = Colors.white..style = PaintingStyle.stroke..strokeWidth = 2);
+          point, 6, Paint()..color = AppColors.backgroundLight..style = PaintingStyle.stroke..strokeWidth = 2);
     }
   }
 
@@ -357,7 +358,7 @@ class _ChartStatistics extends StatelessWidget {
             label: 'Average',
             value: _formatAmount(stats.average, currency),
             icon: Icons.show_chart,
-            color: Colors.blue,
+            color: AppColors.info,
           ),
         ),
         const SizedBox(width: 12),
@@ -366,7 +367,7 @@ class _ChartStatistics extends StatelessWidget {
             label: 'Highest',
             value: _formatAmount(stats.highest, currency),
             icon: Icons.trending_up,
-            color: Colors.green,
+            color: AppColors.success,
           ),
         ),
         const SizedBox(width: 12),
@@ -375,7 +376,7 @@ class _ChartStatistics extends StatelessWidget {
             label: 'Lowest',
             value: _formatAmount(stats.lowest, currency),
             icon: Icons.trending_down,
-            color: Colors.orange,
+            color: AppColors.warning,
           ),
         ),
       ],
@@ -461,7 +462,7 @@ class _StatCard extends StatelessWidget {
           Text(
             label,
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: Colors.grey[600],
+                  color: AppColors.neutral600,
                   fontSize: 10,
                 ),
           ),
@@ -510,7 +511,7 @@ class _EmptyChart extends StatelessWidget {
     return Container(
       height: 200,
       decoration: BoxDecoration(
-        color: Colors.grey.withValues(alpha: 0.1),
+        color: AppColors.neutral100,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Center(
@@ -518,12 +519,12 @@ class _EmptyChart extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(Icons.insert_chart_outlined,
-                size: 48, color: Colors.grey[400]),
+                size: 48, color: AppColors.neutral400),
             const SizedBox(height: 12),
             Text(
               'Add income entries to see trends',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Colors.grey[600],
+                    color: AppColors.neutral600,
                   ),
             ),
           ],

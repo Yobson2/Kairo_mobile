@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:kairo/core/components/components.dart';
+import 'package:kairo/core/theme/theme.dart';
+import 'package:kairo/core/utils/utils.dart';
 import 'package:kairo/features/allocation/presentation/providers/allocation_providers.dart';
 import 'package:kairo/features/allocation/presentation/screens/category_management_screen.dart';
 import 'package:kairo/features/allocation/presentation/screens/strategies_screen.dart';
@@ -34,36 +37,10 @@ class DashboardScreen extends ConsumerWidget {
         },
         child: summaryAsync.when(
           data: (summary) => _buildDashboard(context, summary, latestIncomeAsync),
-          loading: () => const Center(child: CircularProgressIndicator()),
-          error: (error, stack) => Center(
-            child: Padding(
-              padding: const EdgeInsets.all(24.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(Icons.error_outline, size: 64, color: Colors.red),
-                  const SizedBox(height: 16),
-                  Text(
-                    'Failed to load dashboard',
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    error.toString(),
-                    style: Theme.of(context).textTheme.bodyMedium,
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 24),
-                  ElevatedButton.icon(
-                    onPressed: () {
-                      ref.invalidate(allocationSummaryProvider);
-                    },
-                    icon: const Icon(Icons.refresh),
-                    label: const Text('Retry'),
-                  ),
-                ],
-              ),
-            ),
+          loading: () => const LoadingIndicator(),
+          error: (error, stack) => ErrorView.generic(
+            message: 'Failed to load dashboard: $error',
+            onRetry: () => ref.invalidate(allocationSummaryProvider),
           ),
         ),
       ),
@@ -88,7 +65,7 @@ class DashboardScreen extends ConsumerWidget {
     final totalAllocated = summary['total_allocated_this_month'] as double? ?? 0.0;
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.all(AppSizes.paddingMedium),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -99,34 +76,34 @@ class DashboardScreen extends ConsumerWidget {
                   fontWeight: FontWeight.bold,
                 ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: AppSizes.paddingSmall),
           Text(
             'Here\'s your financial overview',
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  color: Colors.grey[600],
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: AppSizes.paddingLarge),
 
           // Latest Income Card
           Card(
             child: Padding(
-              padding: const EdgeInsets.all(20.0),
+              padding: const EdgeInsets.all(AppSizes.paddingLarge),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
                     children: [
                       Container(
-                        padding: const EdgeInsets.all(8),
+                        padding: const EdgeInsets.all(AppSizes.paddingSmall),
                         decoration: BoxDecoration(
-                          color: Colors.green.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(8),
+                          color: AppColors.success.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(AppSizes.borderRadiusSmall),
                         ),
                         child: const Icon(Icons.account_balance_wallet,
-                            color: Colors.green),
+                            color: AppColors.success),
                       ),
-                      const SizedBox(width: 12),
+                      const SizedBox(width: AppSizes.paddingSmall),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -143,7 +120,7 @@ class DashboardScreen extends ConsumerWidget {
                                     .headlineMedium
                                     ?.copyWith(
                                       fontWeight: FontWeight.bold,
-                                      color: Colors.green,
+                                      color: AppColors.success,
                                     ),
                               )
                             else
@@ -160,17 +137,17 @@ class DashboardScreen extends ConsumerWidget {
               ),
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AppSizes.paddingMedium),
 
           // Total Allocated This Month
           Card(
             color: Theme.of(context).colorScheme.primaryContainer,
             child: Padding(
-              padding: const EdgeInsets.all(20.0),
+              padding: const EdgeInsets.all(AppSizes.paddingLarge),
               child: Row(
                 children: [
                   const Icon(Icons.pie_chart, size: 32),
-                  const SizedBox(width: 16),
+                  const SizedBox(width: AppSizes.paddingMedium),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -194,7 +171,7 @@ class DashboardScreen extends ConsumerWidget {
               ),
             ),
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: AppSizes.paddingLarge),
 
           // Active Strategy Section
           if (activeStrategy != null) ...[
@@ -220,10 +197,10 @@ class DashboardScreen extends ConsumerWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: AppSizes.paddingSmall),
             Card(
               child: Padding(
-                padding: const EdgeInsets.all(16.0),
+                padding: const EdgeInsets.all(AppSizes.paddingMedium),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -233,13 +210,13 @@ class DashboardScreen extends ConsumerWidget {
                             fontWeight: FontWeight.w600,
                           ),
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: AppSizes.paddingMedium),
                     // Display allocations
                     if (activeStrategy['allocations'] != null)
                       ...(activeStrategy['allocations'] as List).map((alloc) {
                         final percentage = alloc['percentage'] as num;
                         return Padding(
-                          padding: const EdgeInsets.only(bottom: 8.0),
+                          padding: const EdgeInsets.only(bottom: AppSizes.paddingSmall),
                           child: Row(
                             children: [
                               Expanded(
@@ -266,7 +243,7 @@ class DashboardScreen extends ConsumerWidget {
               ),
             ),
           ],
-          const SizedBox(height: 24),
+          const SizedBox(height: AppSizes.paddingLarge),
 
           // Categories Section
           if (categories != null && categories.isNotEmpty) ...[
@@ -292,24 +269,17 @@ class DashboardScreen extends ConsumerWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: AppSizes.paddingSmall),
             ...categories.map((category) {
+              final categoryColor = AppColors.fromHex(category['color'] as String);
               return Card(
-                margin: const EdgeInsets.only(bottom: 8),
+                margin: const EdgeInsets.only(bottom: AppSizes.paddingSmall),
                 child: ListTile(
                   leading: CircleAvatar(
-                    backgroundColor: Color(
-                      int.parse(
-                        (category['color'] as String).replaceFirst('#', '0xFF'),
-                      ),
-                    ).withValues(alpha: 0.2),
+                    backgroundColor: categoryColor.withValues(alpha: 0.2),
                     child: Icon(
                       Icons.category,
-                      color: Color(
-                        int.parse(
-                          (category['color'] as String).replaceFirst('#', '0xFF'),
-                        ),
-                      ),
+                      color: categoryColor,
                     ),
                   ),
                   title: Text(category['name'] as String),

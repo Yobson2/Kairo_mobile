@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:kairo/core/components/components.dart';
+import 'package:kairo/core/theme/theme.dart';
+import 'package:kairo/core/utils/utils.dart';
 import 'package:kairo/features/allocation/domain/entities/allocation_category.dart';
 import 'package:kairo/features/allocation/presentation/providers/allocation_providers.dart';
 import 'package:kairo/features/auth/presentation/providers/auth_providers.dart';
@@ -19,28 +22,9 @@ class CategoryManagementScreen extends ConsumerWidget {
       ),
       body: categoriesAsync.when(
         data: (categories) => _buildCategoryList(context, ref, categories),
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stack) => Center(
-          child: Padding(
-            padding: const EdgeInsets.all(24.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(Icons.error_outline, size: 64, color: Colors.red),
-                const SizedBox(height: 16),
-                Text(
-                  'Failed to load categories',
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  error.toString(),
-                  style: Theme.of(context).textTheme.bodyMedium,
-                  textAlign: TextAlign.center,
-                ),
-              ],
-            ),
-          ),
+        loading: () => const LoadingIndicator(),
+        error: (error, stack) => ErrorView.generic(
+          message: 'Failed to load categories: $error',
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
@@ -57,34 +41,14 @@ class CategoryManagementScreen extends ConsumerWidget {
     List<AllocationCategory> categories,
   ) {
     if (categories.isEmpty) {
-      return Center(
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.category, size: 64, color: Colors.grey[400]),
-              const SizedBox(height: 16),
-              Text(
-                'No categories yet',
-                style: Theme.of(context).textTheme.titleLarge,
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'Tap the button below to add your first category',
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Colors.grey[600],
-                    ),
-                textAlign: TextAlign.center,
-              ),
-            ],
-          ),
-        ),
+      return EmptyState.noItems(
+        itemName: 'categories',
+        onAction: () => _showAddCategoryDialog(context, ref),
       );
     }
 
     return ReorderableListView.builder(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.all(AppSizes.paddingMedium),
       itemCount: categories.length,
       onReorder: (oldIndex, newIndex) {
         _reorderCategories(ref, categories, oldIndex, newIndex);
@@ -202,16 +166,11 @@ class CategoryManagementScreen extends ConsumerWidget {
               await ref.read(deleteCategoryProvider.notifier).execute(category.id);
 
               if (context.mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('${category.name} deleted'),
-                    backgroundColor: Colors.green,
-                  ),
-                );
+                context.showSuccessSnackBar('${category.name} deleted');
               }
             },
             style: FilledButton.styleFrom(
-              backgroundColor: Colors.red,
+              backgroundColor: AppColors.error,
             ),
             child: const Text('Delete'),
           ),
@@ -235,18 +194,15 @@ class _CategoryTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final categoryColor = AppColors.fromHex(category.color);
     return Card(
-      margin: const EdgeInsets.only(bottom: 12),
+      margin: const EdgeInsets.only(bottom: AppSizes.paddingSmall),
       child: ListTile(
         leading: CircleAvatar(
-          backgroundColor: Color(
-            int.parse(category.color.replaceFirst('#', '0xFF')),
-          ).withValues(alpha: 0.2),
+          backgroundColor: categoryColor.withValues(alpha: 0.2),
           child: Icon(
             _getIconData(category.icon),
-            color: Color(
-              int.parse(category.color.replaceFirst('#', '0xFF')),
-            ),
+            color: categoryColor,
           ),
         ),
         title: Text(
@@ -269,7 +225,7 @@ class _CategoryTile extends StatelessWidget {
             ),
             if (!category.isDefault) // Can't delete default categories
               IconButton(
-                icon: const Icon(Icons.delete, color: Colors.red),
+                icon: const Icon(Icons.delete, color: AppColors.error),
                 onPressed: onDelete,
                 tooltip: 'Delete category',
               ),
@@ -355,23 +311,21 @@ class _CategoryDialogState extends State<_CategoryDialog> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            TextField(
+            AppTextField(
               controller: _nameController,
-              decoration: const InputDecoration(
-                labelText: 'Category Name',
-                border: OutlineInputBorder(),
-              ),
+              label: 'Category Name',
+              prefixIcon: Icons.label,
               autofocus: true,
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AppSizes.paddingMedium),
             Text(
               'Color',
               style: Theme.of(context).textTheme.titleSmall,
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: AppSizes.paddingSmall),
             Wrap(
-              spacing: 8,
-              runSpacing: 8,
+              spacing: AppSizes.paddingSmall,
+              runSpacing: AppSizes.paddingSmall,
               children: _colorOptions.map((color) {
                 final isSelected = color == _selectedColor;
                 return InkWell(
@@ -384,15 +338,15 @@ class _CategoryDialogState extends State<_CategoryDialog> {
                     width: 40,
                     height: 40,
                     decoration: BoxDecoration(
-                      color: Color(int.parse(color.replaceFirst('#', '0xFF'))),
+                      color: AppColors.fromHex(color),
                       shape: BoxShape.circle,
                       border: Border.all(
-                        color: isSelected ? Colors.black : Colors.transparent,
+                        color: isSelected ? Theme.of(context).colorScheme.onSurface : Colors.transparent,
                         width: 3,
                       ),
                     ),
                     child: isSelected
-                        ? const Icon(Icons.check, color: Colors.white, size: 20)
+                        ? Icon(Icons.check, color: Theme.of(context).colorScheme.surface, size: 20)
                         : null,
                   ),
                 );

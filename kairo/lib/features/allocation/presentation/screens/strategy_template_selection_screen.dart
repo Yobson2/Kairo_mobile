@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:kairo/core/theme/theme.dart';
 import 'package:kairo/features/allocation/domain/entities/income_entry.dart';
 import 'package:kairo/features/allocation/domain/entities/strategy_template.dart';
 import 'package:kairo/features/allocation/domain/entities/allocation_strategy.dart';
@@ -114,7 +115,7 @@ class _StrategyTemplateSelectionScreenState
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('✨ ${_selectedTemplate!.name} strategy applied!'),
-            backgroundColor: Colors.green,
+            backgroundColor: AppColors.success,
           ),
         );
         context.go('/dashboard');
@@ -124,7 +125,7 @@ class _StrategyTemplateSelectionScreenState
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Error applying template: $e'),
-            backgroundColor: Colors.red,
+            backgroundColor: AppColors.error,
           ),
         );
       }
@@ -168,7 +169,7 @@ class _TemplateSelection extends StatelessWidget {
                 ? 'Recommended for ${_getIncomeTypeLabel(incomeType!)} income'
                 : 'Select a strategy that matches your goals',
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  color: Colors.grey[600],
+                  color: AppColors.neutral600,
                 ),
           ),
           const SizedBox(height: 24),
@@ -199,7 +200,7 @@ class _TemplateSelection extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: Colors.grey.withValues(alpha: 0.1),
+                        color: AppColors.neutral100,
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: const Icon(Icons.edit, size: 28),
@@ -225,7 +226,7 @@ class _TemplateSelection extends StatelessWidget {
                                 .textTheme
                                 .bodyMedium
                                 ?.copyWith(
-                                  color: Colors.grey[600],
+                                  color: AppColors.neutral600,
                                 ),
                           ),
                         ],
@@ -318,7 +319,7 @@ class _TemplateCard extends StatelessWidget {
                           template.description,
                           style:
                               Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                    color: Colors.grey[600],
+                                    color: AppColors.neutral600,
                                   ),
                         ),
                       ],
@@ -359,7 +360,7 @@ class _TemplateCard extends StatelessWidget {
                           benefit,
                           style:
                               Theme.of(context).textTheme.bodySmall?.copyWith(
-                                    color: Colors.grey[700],
+                                    color: AppColors.neutral700,
                                   ),
                         ),
                       ),
@@ -374,7 +375,7 @@ class _TemplateCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Colors.grey.withValues(alpha: 0.1),
+                  color: AppColors.neutral100,
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Row(
@@ -382,14 +383,14 @@ class _TemplateCard extends StatelessWidget {
                     Icon(
                       Icons.recommend,
                       size: 16,
-                      color: Colors.grey[700],
+                      color: AppColors.neutral700,
                     ),
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
                         template.recommendedFor,
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: Colors.grey[700],
+                              color: AppColors.neutral700,
                               fontStyle: FontStyle.italic,
                             ),
                       ),
@@ -466,7 +467,7 @@ class _TemplatePreview extends StatelessWidget {
                                 .textTheme
                                 .bodyMedium
                                 ?.copyWith(
-                                  color: Colors.grey[600],
+                                  color: AppColors.neutral600,
                                 ),
                           ),
                         ],
@@ -544,7 +545,7 @@ class _TemplatePreview extends StatelessWidget {
             color: Theme.of(context).colorScheme.surface,
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.05),
+                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.05),
                 blurRadius: 10,
                 offset: const Offset(0, -5),
               ),
@@ -626,7 +627,7 @@ class _AllocationBar extends StatelessWidget {
           LinearProgressIndicator(
             value: percentage / 100,
             minHeight: 12,
-            backgroundColor: Colors.grey.withValues(alpha: 0.2),
+            backgroundColor: AppColors.neutral300,
             valueColor: AlwaysStoppedAnimation(color),
             borderRadius: BorderRadius.circular(6),
           ),

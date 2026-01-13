@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:kairo/core/theme/theme.dart';
 import 'package:kairo/features/allocation/domain/entities/allocation_strategy.dart';
 import 'package:kairo/features/allocation/domain/entities/income_entry.dart';
 import 'package:kairo/features/allocation/presentation/providers/allocation_providers.dart';
@@ -149,7 +150,7 @@ class _EnhancedOnboardingFlowState
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Please sign in first'),
-          backgroundColor: Colors.red,
+          backgroundColor: AppColors.error,
         ),
       );
       return;
@@ -218,7 +219,7 @@ class _EnhancedOnboardingFlowState
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('🎉 Welcome to Kairo! Your money has a plan.'),
-              backgroundColor: Colors.green,
+              backgroundColor: AppColors.success,
               duration: Duration(seconds: 2),
             ),
           );
@@ -228,7 +229,7 @@ class _EnhancedOnboardingFlowState
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('Something went wrong. Please try again.'),
-              backgroundColor: Colors.red,
+              backgroundColor: AppColors.error,
               duration: const Duration(seconds: 3),
             ),
           );
@@ -336,7 +337,7 @@ class _OnboardingProgressBar extends StatelessWidget {
               Text(
                 '~${_estimatedTime(currentStep)}s',
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Colors.grey[600],
+                      color: AppColors.neutral600,
                     ),
               ),
             ],
@@ -403,7 +404,7 @@ class _WelcomeStep extends StatelessWidget {
           Text(
             'Let\'s design where your money should go.\nNo tracking. No guilt. Just your plan.',
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  color: Colors.grey[600],
+                  color: AppColors.neutral600,
                 ),
             textAlign: TextAlign.center,
           ),
@@ -481,7 +482,7 @@ class _InfoCard extends StatelessWidget {
                 Text(
                   subtitle,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Colors.grey[600],
+                        color: AppColors.neutral600,
                       ),
                 ),
               ],
@@ -536,7 +537,7 @@ class _IncomeStep extends StatelessWidget {
           Text(
             'How much money do you have this month?',
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  color: Colors.grey[600],
+                  color: AppColors.neutral600,
                 ),
           ),
           const SizedBox(height: 32),
@@ -594,7 +595,7 @@ class _IncomeStep extends StatelessWidget {
           Text(
             'This helps us give you better advice',
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: Colors.grey[600],
+                  color: AppColors.neutral600,
                 ),
           ),
           const SizedBox(height: 12),
@@ -706,7 +707,7 @@ class _IncomeTypeCard extends StatelessWidget {
           border: Border.all(
             color: isSelected
                 ? Theme.of(context).colorScheme.primary
-                : Colors.grey[300]!,
+                : AppColors.neutral300,
             width: isSelected ? 2 : 1,
           ),
           borderRadius: BorderRadius.circular(12),
@@ -720,7 +721,7 @@ class _IncomeTypeCard extends StatelessWidget {
               icon,
               color: isSelected
                   ? Theme.of(context).colorScheme.primary
-                  : Colors.grey[600],
+                  : AppColors.neutral600,
             ),
             const SizedBox(width: 16),
             Expanded(
@@ -739,7 +740,7 @@ class _IncomeTypeCard extends StatelessWidget {
                   Text(
                     subtitle,
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Colors.grey[600],
+                          color: AppColors.neutral600,
                         ),
                   ),
                 ],
@@ -799,7 +800,7 @@ class _AllocationStep extends StatelessWidget {
               Text(
                 'Adjust the sliders to allocate your money',
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      color: Colors.grey[600],
+                      color: AppColors.neutral600,
                     ),
               ),
             ],
@@ -830,11 +831,11 @@ class _AllocationStep extends StatelessWidget {
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
                   color: isValid
-                      ? Colors.green.withValues(alpha: 0.1)
-                      : Colors.orange.withValues(alpha: 0.1),
+                      ? AppColors.success.withValues(alpha: 0.1)
+                      : AppColors.warning.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: isValid ? Colors.green : Colors.orange,
+                    color: isValid ? AppColors.success : AppColors.warning,
                     width: 2,
                   ),
                 ),
@@ -854,7 +855,7 @@ class _AllocationStep extends StatelessWidget {
                           '${totalPercentage.toStringAsFixed(0)}%',
                           style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                                 fontWeight: FontWeight.bold,
-                                color: isValid ? Colors.green : Colors.orange,
+                                color: isValid ? AppColors.success : AppColors.warning,
                               ),
                         ),
                       ],
@@ -866,7 +867,7 @@ class _AllocationStep extends StatelessWidget {
                             ? '${remainingPercentage.toStringAsFixed(0)}% left to allocate'
                             : '${remainingPercentage.abs().toStringAsFixed(0)}% over - adjust sliders',
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: Colors.orange[700],
+                              color: AppColors.neutral700,
                               fontWeight: FontWeight.w500,
                             ),
                       ),
@@ -988,7 +989,7 @@ class _AllocationSliderCardState extends State<_AllocationSliderCard> {
                           '${_getCurrencySymbol(widget.currency)}${widget.allocatedAmount.toStringAsFixed(2)}',
                           style:
                               Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                    color: Colors.grey[600],
+                                    color: AppColors.neutral600,
                                     fontWeight: FontWeight.w500,
                                   ),
                         ),
@@ -1020,7 +1021,7 @@ class _AllocationSliderCardState extends State<_AllocationSliderCard> {
                 child: Text(
                   widget.item.tooltip,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Colors.grey[700],
+                        color: AppColors.neutral700,
                       ),
                 ),
               ),
@@ -1107,7 +1108,7 @@ class _PreviewStep extends StatelessWidget {
           Text(
             'Here\'s how your money will be allocated',
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  color: Colors.grey[600],
+                  color: AppColors.neutral600,
                 ),
           ),
           const SizedBox(height: 24),
@@ -1132,7 +1133,7 @@ class _PreviewStep extends StatelessWidget {
                     Text(
                       '${_getIncomeTypeLabel(incomeType)} income',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Colors.grey[600],
+                            color: AppColors.neutral600,
                           ),
                     ),
                   ],
@@ -1191,19 +1192,19 @@ class _PreviewStep extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.green.withValues(alpha: 0.1),
+              color: AppColors.success.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.green, width: 1),
+              border: Border.all(color: AppColors.success, width: 1),
             ),
             child: Row(
               children: [
-                const Icon(Icons.check_circle, color: Colors.green),
+                const Icon(Icons.check_circle, color: AppColors.success),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
                     'Perfect! Your money has a clear plan.',
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Colors.green[800],
+                          color: AppColors.neutral700,
                           fontWeight: FontWeight.w500,
                         ),
                   ),
@@ -1234,12 +1235,12 @@ class _PreviewStep extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(vertical: 16),
                   ),
                   child: isLoading
-                      ? const SizedBox(
+                      ? SizedBox(
                           height: 20,
                           width: 20,
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
-                            color: Colors.white,
+                            color: Theme.of(context).colorScheme.onPrimary,
                           ),
                         )
                       : const Text('Complete Setup'),

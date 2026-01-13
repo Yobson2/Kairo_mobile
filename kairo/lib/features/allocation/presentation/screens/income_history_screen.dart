@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:kairo/core/theme/theme.dart';
 import 'package:kairo/features/allocation/domain/entities/income_entry.dart';
 import 'package:kairo/features/allocation/presentation/providers/allocation_providers.dart';
 import 'package:kairo/features/allocation/presentation/screens/income_entry_screen.dart';
@@ -79,7 +80,7 @@ class _IncomeHistoryScreenState extends ConsumerState<IncomeHistoryScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.error_outline, size: 64, color: Colors.red),
+              const Icon(Icons.error_outline, size: 64, color: AppColors.error),
               const SizedBox(height: 16),
               Text('Error loading income history'),
               const SizedBox(height: 8),
@@ -157,7 +158,7 @@ class _IncomeHistoryScreenState extends ConsumerState<IncomeHistoryScreen> {
                 Text(
                   count == 1 ? 'Entry' : 'Entries',
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Colors.grey[600],
+                        color: AppColors.neutral600,
                       ),
                 ),
               ],
@@ -165,7 +166,7 @@ class _IncomeHistoryScreenState extends ConsumerState<IncomeHistoryScreen> {
             Container(
               width: 1,
               height: 40,
-              color: Colors.grey[300],
+              color: AppColors.neutral300,
             ),
             Column(
               children: [
@@ -173,14 +174,14 @@ class _IncomeHistoryScreenState extends ConsumerState<IncomeHistoryScreen> {
                   'KSh ${NumberFormat('#,##0.00').format(total)}',
                   style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: Colors.green,
+                        color: AppColors.success,
                       ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   'Total Income',
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Colors.grey[600],
+                        color: AppColors.neutral600,
                       ),
                 ),
               ],
@@ -197,7 +198,7 @@ class _IncomeHistoryScreenState extends ConsumerState<IncomeHistoryScreen> {
       child: ListTile(
         contentPadding: const EdgeInsets.all(16),
         leading: CircleAvatar(
-          backgroundColor: _getIncomeTypeColor(entry.incomeType).withOpacity(0.2),
+          backgroundColor: _getIncomeTypeColor(entry.incomeType).withValues(alpha: 0.2),
           child: Icon(
             _getIncomeSourceIcon(entry.incomeSource),
             color: _getIncomeTypeColor(entry.incomeType),
@@ -226,7 +227,7 @@ class _IncomeHistoryScreenState extends ConsumerState<IncomeHistoryScreen> {
                 if (entry.incomeSource != null)
                   _buildChip(
                     entry.incomeSource!.label,
-                    Colors.grey,
+                    AppColors.neutral500,
                   ),
               ],
             ),
@@ -235,7 +236,7 @@ class _IncomeHistoryScreenState extends ConsumerState<IncomeHistoryScreen> {
               Text(
                 entry.description!,
                 style: TextStyle(
-                  color: Colors.grey[600],
+                  color: AppColors.neutral600,
                   fontSize: 12,
                 ),
               ),
@@ -265,9 +266,9 @@ class _IncomeHistoryScreenState extends ConsumerState<IncomeHistoryScreen> {
               value: 'delete',
               child: Row(
                 children: [
-                  Icon(Icons.delete, size: 20, color: Colors.red),
+                  Icon(Icons.delete, size: 20, color: AppColors.error),
                   SizedBox(width: 8),
-                  Text('Delete', style: TextStyle(color: Colors.red)),
+                  Text('Delete', style: TextStyle(color: AppColors.error)),
                 ],
               ),
             ),
@@ -281,7 +282,7 @@ class _IncomeHistoryScreenState extends ConsumerState<IncomeHistoryScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Text(
@@ -303,7 +304,7 @@ class _IncomeHistoryScreenState extends ConsumerState<IncomeHistoryScreen> {
           Icon(
             Icons.account_balance_wallet_outlined,
             size: 80,
-            color: Colors.grey[400],
+            color: AppColors.neutral400,
           ),
           const SizedBox(height: 16),
           Text(
@@ -314,7 +315,7 @@ class _IncomeHistoryScreenState extends ConsumerState<IncomeHistoryScreen> {
           Text(
             'Track your income to see your allocation insights',
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Colors.grey[600],
+                  color: AppColors.neutral600,
                 ),
             textAlign: TextAlign.center,
           ),
@@ -443,7 +444,7 @@ class _IncomeHistoryScreenState extends ConsumerState<IncomeHistoryScreen> {
           ),
           FilledButton(
             onPressed: () => Navigator.pop(context, true),
-            style: FilledButton.styleFrom(backgroundColor: Colors.red),
+            style: FilledButton.styleFrom(backgroundColor: AppColors.error),
             child: const Text('Delete'),
           ),
         ],
@@ -457,7 +458,7 @@ class _IncomeHistoryScreenState extends ConsumerState<IncomeHistoryScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Income entry deleted'),
-            backgroundColor: Colors.green,
+            backgroundColor: AppColors.success,
           ),
         );
       }
@@ -479,11 +480,11 @@ class _IncomeHistoryScreenState extends ConsumerState<IncomeHistoryScreen> {
   Color _getIncomeTypeColor(IncomeType type) {
     switch (type) {
       case IncomeType.fixed:
-        return Colors.blue;
+        return AppColors.info;
       case IncomeType.variable:
-        return Colors.orange;
+        return AppColors.warning;
       case IncomeType.mixed:
-        return Colors.purple;
+        return AppColors.neutral500;
     }
   }
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:kairo/core/theme/theme.dart';
 import 'package:kairo/features/allocation/domain/entities/allocation_category.dart';
 import 'package:kairo/features/allocation/domain/entities/allocation_strategy.dart';
 import 'package:kairo/features/allocation/domain/entities/income_entry.dart';
@@ -96,18 +97,18 @@ class _AnalyticsView extends StatelessWidget {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
-                    color: Colors.green.withValues(alpha: 0.1),
+                    color: AppColors.success.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.green),
+                    border: Border.all(color: AppColors.success),
                   ),
                   child: const Row(
                     children: [
-                      Icon(Icons.check_circle, size: 16, color: Colors.green),
+                      Icon(Icons.check_circle, size: 16, color: AppColors.success),
                       SizedBox(width: 4),
                       Text(
                         'Active',
                         style: TextStyle(
-                          color: Colors.green,
+                          color: AppColors.success,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -118,7 +119,7 @@ class _AnalyticsView extends StatelessWidget {
               Text(
                 'Created ${_formatDate(strategy.createdAt)}',
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Colors.grey[600],
+                      color: AppColors.neutral600,
                     ),
               ),
             ],
@@ -196,7 +197,7 @@ class _AnalyticsView extends StatelessWidget {
         message:
             '${maxAllocation.toStringAsFixed(0)}% allocated to ${category.name}. Consider diversifying.',
         icon: Icons.warning_amber,
-        color: Colors.orange,
+        color: AppColors.warning,
       ));
     }
 
@@ -218,7 +219,7 @@ class _AnalyticsView extends StatelessWidget {
         message:
             'Only ${emergencyAllocation.toStringAsFixed(0)}% for emergencies. Consider increasing to 15-20%.',
         icon: Icons.shield_outlined,
-        color: Colors.blue,
+        color: AppColors.info,
       ));
     } else if (emergencyAllocation >= 20) {
       insights.add(StrategyInsight(
@@ -227,7 +228,7 @@ class _AnalyticsView extends StatelessWidget {
         message:
             'Great! ${emergencyAllocation.toStringAsFixed(0)}% emergency buffer provides good protection.',
         icon: Icons.check_circle,
-        color: Colors.green,
+        color: AppColors.success,
       ));
     }
 
@@ -249,7 +250,7 @@ class _AnalyticsView extends StatelessWidget {
         message:
             '${savingsAllocation.toStringAsFixed(0)}% to savings will build wealth quickly!',
         icon: Icons.trending_up,
-        color: Colors.green,
+        color: AppColors.success,
       ));
     }
 
@@ -265,7 +266,7 @@ class _AnalyticsView extends StatelessWidget {
           message:
               'With variable income, consider 20-30% emergency allocation for stability.',
           icon: Icons.trending_up,
-          color: Colors.orange,
+          color: AppColors.warning,
         ));
       }
     }
@@ -296,7 +297,7 @@ class _AnalyticsView extends StatelessWidget {
         message:
             'Your income has increased for 3 months. Consider increasing savings allocation.',
         direction: TrendDirection.up,
-        color: Colors.green,
+        color: AppColors.success,
       ));
     } else if (isDecreasing) {
       trends.add(StrategyTrend(
@@ -304,7 +305,7 @@ class _AnalyticsView extends StatelessWidget {
         message:
             'Income has dropped recently. Ensure your emergency fund is strong.',
         direction: TrendDirection.down,
-        color: Colors.orange,
+        color: AppColors.warning,
       ));
     }
 
@@ -340,7 +341,7 @@ class _KeyMetrics extends StatelessWidget {
             label: 'Categories',
             value: strategy.allocations.length.toString(),
             icon: Icons.category,
-            color: Colors.blue,
+            color: AppColors.info,
           ),
         ),
         const SizedBox(width: 12),
@@ -349,7 +350,7 @@ class _KeyMetrics extends StatelessWidget {
             label: 'Total %',
             value: '${strategy.totalPercentage.toStringAsFixed(0)}%',
             icon: Icons.pie_chart,
-            color: strategy.isValid ? Colors.green : Colors.red,
+            color: strategy.isValid ? AppColors.success : AppColors.error,
           ),
         ),
         const SizedBox(width: 12),
@@ -358,7 +359,7 @@ class _KeyMetrics extends StatelessWidget {
             label: 'Income Entries',
             value: incomeHistory.length.toString(),
             icon: Icons.attach_money,
-            color: Colors.orange,
+            color: AppColors.warning,
           ),
         ),
       ],
@@ -399,7 +400,7 @@ class _MetricCard extends StatelessWidget {
             Text(
               label,
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Colors.grey[600],
+                    color: AppColors.neutral600,
                   ),
               textAlign: TextAlign.center,
             ),
@@ -453,9 +454,9 @@ class _AllocationBreakdown extends StatelessWidget {
 
   Color _parseColor(String colorHex) {
     try {
-      return Color(int.parse(colorHex.replaceFirst('#', '0xFF')));
+      return AppColors.fromHex(colorHex);
     } catch (e) {
-      return Colors.grey;
+      return AppColors.neutral500;
     }
   }
 }
@@ -501,7 +502,7 @@ class _AllocationBar extends StatelessWidget {
           LinearProgressIndicator(
             value: percentage / 100,
             minHeight: 12,
-            backgroundColor: Colors.grey.withValues(alpha: 0.2),
+            backgroundColor: AppColors.neutral300.withValues(alpha: 0.2),
             valueColor: AlwaysStoppedAnimation(color),
             borderRadius: BorderRadius.circular(6),
           ),
@@ -543,7 +544,7 @@ class _InsightCard extends StatelessWidget {
                   Text(
                     insight.message,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Colors.grey[700],
+                          color: AppColors.neutral700,
                         ),
                   ),
                 ],
@@ -592,7 +593,7 @@ class _TrendCard extends StatelessWidget {
                   Text(
                     trend.message,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Colors.grey[700],
+                          color: AppColors.neutral700,
                         ),
                   ),
                 ],
@@ -619,7 +620,7 @@ class _ErrorState extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.error_outline, size: 80, color: Colors.red),
+            const Icon(Icons.error_outline, size: 80, color: AppColors.error),
             const SizedBox(height: 24),
             Text(
               'Error Loading Analytics',
@@ -629,7 +630,7 @@ class _ErrorState extends StatelessWidget {
             Text(
               message,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Colors.grey[600],
+                    color: AppColors.neutral600,
                   ),
               textAlign: TextAlign.center,
             ),

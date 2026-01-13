@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:kairo/core/theme/theme.dart';
 import 'package:kairo/features/allocation/domain/entities/allocation_category.dart';
 import 'package:kairo/features/allocation/domain/entities/allocation_strategy.dart';
 import 'package:kairo/features/allocation/presentation/providers/allocation_providers.dart';
@@ -128,7 +129,7 @@ class _ComparisonView extends StatelessWidget {
           Text(
             'See how allocations differ across strategies',
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Colors.grey[600],
+                  color: AppColors.neutral600,
                 ),
           ),
           const SizedBox(height: 24),
@@ -188,7 +189,7 @@ class _StrategyHeaders extends StatelessWidget {
                         .colorScheme
                         .primaryContainer
                         .withValues(alpha: 0.3)
-                    : Colors.grey.withValues(alpha: 0.1),
+                    : AppColors.neutral100,
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Column(
@@ -214,7 +215,7 @@ class _StrategyHeaders extends StatelessWidget {
                       child: Text(
                         'Active',
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: Colors.white,
+                              color: Theme.of(context).colorScheme.onPrimary,
                               fontWeight: FontWeight.w600,
                             ),
                       ),
@@ -283,11 +284,11 @@ class _CategoryComparisonRow extends StatelessWidget {
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     color: isHighest
-                        ? Colors.green.withValues(alpha: 0.1)
+                        ? AppColors.success.withValues(alpha: 0.1)
                         : null,
                     borderRadius: BorderRadius.circular(6),
                     border: isHighest
-                        ? Border.all(color: Colors.green, width: 2)
+                        ? Border.all(color: AppColors.success, width: 2)
                         : null,
                   ),
                   child: Column(
@@ -297,14 +298,14 @@ class _CategoryComparisonRow extends StatelessWidget {
                         style:
                             Theme.of(context).textTheme.titleMedium?.copyWith(
                                   fontWeight: FontWeight.bold,
-                                  color: isHighest ? Colors.green : null,
+                                  color: isHighest ? AppColors.success : null,
                                 ),
                       ),
                       if (isHighest)
-                        const Icon(
+                        Icon(
                           Icons.arrow_upward,
                           size: 16,
-                          color: Colors.green,
+                          color: AppColors.success,
                         ),
                     ],
                   ),
@@ -356,14 +357,14 @@ class _TotalRow extends StatelessWidget {
                         style:
                             Theme.of(context).textTheme.titleMedium?.copyWith(
                                   fontWeight: FontWeight.bold,
-                                  color: isValid ? Colors.green : Colors.red,
+                                  color: isValid ? AppColors.success : AppColors.error,
                                 ),
                       ),
                       const SizedBox(width: 4),
                       Icon(
                         isValid ? Icons.check_circle : Icons.warning,
                         size: 20,
-                        color: isValid ? Colors.green : Colors.red,
+                        color: isValid ? AppColors.success : AppColors.error,
                       ),
                     ],
                   ),
@@ -411,16 +412,16 @@ class _ComparisonInsights extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.blue.withValues(alpha: 0.1),
+                color: AppColors.info.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: Colors.blue.withValues(alpha: 0.3),
+                  color: AppColors.info.withValues(alpha: 0.3),
                 ),
               ),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Icon(Icons.lightbulb_outline, color: Colors.blue),
+                  Icon(Icons.lightbulb_outline, color: AppColors.info),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
@@ -484,7 +485,7 @@ class _EmptyState extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.compare_arrows, size: 80, color: Colors.grey[400]),
+            Icon(Icons.compare_arrows, size: 80, color: AppColors.neutral400),
             const SizedBox(height: 24),
             Text(
               'No Strategies to Compare',
@@ -496,7 +497,7 @@ class _EmptyState extends StatelessWidget {
             Text(
               'Create at least 2 strategies to compare them',
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    color: Colors.grey[600],
+                    color: AppColors.neutral600,
                   ),
               textAlign: TextAlign.center,
             ),
@@ -521,7 +522,7 @@ class _ErrorState extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.error_outline, size: 80, color: Colors.red),
+            Icon(Icons.error_outline, size: 80, color: AppColors.error),
             const SizedBox(height: 24),
             Text(
               'Error Loading Strategies',
@@ -531,7 +532,7 @@ class _ErrorState extends StatelessWidget {
             Text(
               message,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Colors.grey[600],
+                    color: AppColors.neutral600,
                   ),
               textAlign: TextAlign.center,
             ),

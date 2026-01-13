@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:kairo/core/theme/theme.dart';
 import 'package:kairo/features/allocation/domain/entities/allocation_category.dart';
 import 'package:kairo/features/allocation/domain/entities/allocation_strategy.dart';
 import 'package:kairo/features/allocation/domain/entities/income_entry.dart';
@@ -125,7 +126,7 @@ class _OnboardingAllocationScreenState
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Please sign in first'),
-          backgroundColor: Colors.red,
+          backgroundColor: AppColors.error,
         ),
       );
       return;
@@ -197,7 +198,7 @@ class _OnboardingAllocationScreenState
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('✅ Allocation saved! Welcome to Kairo.'),
-              backgroundColor: Colors.green,
+              backgroundColor: AppColors.success,
               duration: Duration(seconds: 2),
             ),
           );
@@ -212,7 +213,7 @@ class _OnboardingAllocationScreenState
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('Failed to save allocation: $error'),
-              backgroundColor: Colors.red,
+              backgroundColor: AppColors.error,
               duration: const Duration(seconds: 4),
             ),
           );
@@ -251,7 +252,7 @@ class _OnboardingAllocationScreenState
                   Text(
                     'Let\'s plan where your money should go this month',
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          color: Colors.grey[600],
+                          color: AppColors.neutral600,
                         ),
                   ),
                   const SizedBox(height: 24),
@@ -266,7 +267,7 @@ class _OnboardingAllocationScreenState
                       prefixText: '\$ ',
                       border: const OutlineInputBorder(),
                       filled: true,
-                      fillColor: Colors.white,
+                      fillColor: Theme.of(context).colorScheme.surface,
                       helperText: 'Enter the total amount you have to allocate',
                     ),
                     style: Theme.of(context).textTheme.headlineSmall,
@@ -310,7 +311,7 @@ class _OnboardingAllocationScreenState
                   Text(
                     _getIncomeTypeDescription(_selectedIncomeType),
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Colors.grey[600],
+                          color: AppColors.neutral600,
                         ),
                   ),
                 ],
@@ -345,11 +346,11 @@ class _OnboardingAllocationScreenState
                     padding: const EdgeInsets.all(16.0),
                     decoration: BoxDecoration(
                       color: isValid
-                          ? Colors.green.withValues(alpha: 0.1)
-                          : Colors.orange.withValues(alpha: 0.1),
+                          ? AppColors.success.withValues(alpha: 0.1)
+                          : AppColors.warning.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
-                        color: isValid ? Colors.green : Colors.orange,
+                        color: isValid ? AppColors.success : AppColors.warning,
                         width: 2,
                       ),
                     ),
@@ -368,7 +369,7 @@ class _OnboardingAllocationScreenState
                           style:
                               Theme.of(context).textTheme.titleLarge?.copyWith(
                                     fontWeight: FontWeight.bold,
-                                    color: isValid ? Colors.green : Colors.orange,
+                                    color: isValid ? AppColors.success : AppColors.warning,
                                   ),
                         ),
                       ],
@@ -382,7 +383,7 @@ class _OnboardingAllocationScreenState
                           ? '${remainingPercentage.toStringAsFixed(0)}% remaining to allocate'
                           : 'You\'ve allocated ${remainingPercentage.abs().toStringAsFixed(0)}% too much',
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: Colors.orange[700],
+                            color: AppColors.neutral700,
                             fontWeight: FontWeight.w500,
                           ),
                       textAlign: TextAlign.center,
@@ -400,12 +401,12 @@ class _OnboardingAllocationScreenState
                       padding: const EdgeInsets.symmetric(vertical: 16),
                     ),
                     child: saveState.isLoading
-                        ? const SizedBox(
+                        ? SizedBox(
                             height: 20,
                             width: 20,
                             child: CircularProgressIndicator(
                               strokeWidth: 2,
-                              color: Colors.white,
+                              color: Theme.of(context).colorScheme.onPrimary,
                             ),
                           )
                         : const Text(
@@ -477,7 +478,7 @@ class _AllocationSlider extends StatelessWidget {
                           '\$${amount.toStringAsFixed(2)}',
                           style:
                               Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                    color: Colors.grey[600],
+                                    color: AppColors.neutral600,
                                   ),
                         ),
                     ],

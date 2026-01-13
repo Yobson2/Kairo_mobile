@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:kairo/core/components/components.dart';
+import 'package:kairo/core/theme/theme.dart';
+import 'package:kairo/core/utils/utils.dart';
 import 'package:kairo/core/providers/auto_save_provider.dart';
 import 'package:kairo/core/services/auto_save_service.dart';
 import 'package:kairo/features/allocation/domain/entities/income_entry.dart';
 import 'package:kairo/features/allocation/presentation/providers/allocation_providers.dart';
 import 'package:kairo/features/auth/presentation/providers/auth_providers.dart';
-import 'package:intl/intl.dart';
 
 /// Standalone income entry screen
 /// Implements Story 2.3: Income Entry Screen
@@ -57,21 +59,6 @@ class _IncomeEntryScreenState extends ConsumerState<IncomeEntryScreen> {
     super.dispose();
   }
 
-  Future<void> _selectDate() async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: _selectedDate,
-      firstDate: DateTime(2020),
-      lastDate: DateTime.now(),
-      helpText: 'Select Income Date',
-    );
-
-    if (picked != null && picked != _selectedDate) {
-      setState(() {
-        _selectedDate = picked;
-      });
-    }
-  }
 
   Future<void> _saveIncome() async {
     if (!_formKey.currentState!.validate()) return;
@@ -81,12 +68,7 @@ class _IncomeEntryScreenState extends ConsumerState<IncomeEntryScreen> {
     final currentUser = await ref.read(currentUserProvider.future);
     if (currentUser == null) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please sign in first'),
-          backgroundColor: Colors.red,
-        ),
-      );
+      context.showErrorSnackBar('Please sign in first');
       return;
     }
 
@@ -123,27 +105,17 @@ class _IncomeEntryScreenState extends ConsumerState<IncomeEntryScreen> {
       if (!mounted) return;
 
       // Show success message
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            widget.existingEntry != null
-                ? 'Income updated successfully'
-                : 'Income added successfully',
-          ),
-          backgroundColor: Colors.green,
-        ),
+      context.showSuccessSnackBar(
+        widget.existingEntry != null
+            ? 'Income updated successfully'
+            : 'Income added successfully',
       );
 
       // Navigate back
       context.pop();
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Failed to save income: ${e.toString()}'),
-          backgroundColor: Colors.red,
-        ),
-      );
+      context.showErrorSnackBar('Failed to save income: $e');
     }
   }
 
@@ -158,23 +130,23 @@ class _IncomeEntryScreenState extends ConsumerState<IncomeEntryScreen> {
           if (autoSaveStatus.showIndicator)
             Center(
               child: Padding(
-                padding: const EdgeInsets.only(right: 16.0),
+                padding: const EdgeInsets.only(right: AppSizes.paddingMedium),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     if (autoSaveStatus == SaveStatus.saving)
                       const SizedBox(
-                        width: 16,
-                        height: 16,
+                        width: AppSizes.paddingMedium,
+                        height: AppSizes.paddingMedium,
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
                         ),
                       ),
                     if (autoSaveStatus == SaveStatus.saved)
-                      const Icon(Icons.check, color: Colors.green),
+                      const Icon(Icons.check, color: AppColors.success),
                     if (autoSaveStatus == SaveStatus.error)
-                      const Icon(Icons.error, color: Colors.red),
-                    const SizedBox(width: 8),
+                      const Icon(Icons.error, color: AppColors.error),
+                    const SizedBox(width: AppSizes.paddingSmall),
                     Text(
                       autoSaveStatus.message,
                       style: Theme.of(context).textTheme.bodySmall,
@@ -186,7 +158,7 @@ class _IncomeEntryScreenState extends ConsumerState<IncomeEntryScreen> {
         ],
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(AppSizes.paddingMedium),
         child: Form(
           key: _formKey,
           child: Column(
@@ -197,114 +169,78 @@ class _IncomeEntryScreenState extends ConsumerState<IncomeEntryScreen> {
                 'Enter your income details',
                 style: Theme.of(context).textTheme.headlineSmall,
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: AppSizes.paddingLarge),
 
               // Amount input
-              TextFormField(
+              AppTextField(
                 controller: _amountController,
+                label: 'Amount',
+                hint: '0.00',
+                prefixIcon: Icons.attach_money,
                 keyboardType: const TextInputType.numberWithOptions(decimal: true),
                 inputFormatters: [
                   FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}')),
                 ],
-                decoration: InputDecoration(
-                  labelText: 'Amount',
-                  prefixText: _getCurrencySymbol(_selectedCurrency),
-                  border: const OutlineInputBorder(),
-                  hintText: '0.00',
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter an amount';
-                  }
-                  final amount = double.tryParse(value);
-                  if (amount == null || amount <= 0) {
-                    return 'Please enter a valid amount greater than 0';
-                  }
-                  return null;
-                },
+                validator: AppValidators.positiveNumber,
                 autofocus: true,
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: AppSizes.paddingMedium),
 
               // Currency selector
-              DropdownButtonFormField<String>(
+              AppSimpleDropdown(
                 value: _selectedCurrency,
-                decoration: const InputDecoration(
-                  labelText: 'Currency',
-                  border: OutlineInputBorder(),
-                ),
-                items: const [
-                  DropdownMenuItem(value: 'KES', child: Text('KES - Kenyan Shilling')),
-                  DropdownMenuItem(value: 'NGN', child: Text('NGN - Nigerian Naira')),
-                  DropdownMenuItem(value: 'GHS', child: Text('GHS - Ghanaian Cedi')),
-                  DropdownMenuItem(value: 'ZAR', child: Text('ZAR - South African Rand')),
-                  DropdownMenuItem(value: 'USD', child: Text('USD - US Dollar')),
-                ],
-                onChanged: (value) {
-                  setState(() {
-                    _selectedCurrency = value!;
-                  });
-                },
+                label: 'Currency',
+                prefixIcon: Icons.currency_exchange,
+                items: AppDefaults.supportedCurrencies,
+                onChanged: (value) => setState(() => _selectedCurrency = value!),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: AppSizes.paddingMedium),
 
               // Date picker
-              InkWell(
-                onTap: _selectDate,
-                child: InputDecorator(
-                  decoration: const InputDecoration(
-                    labelText: 'Income Date',
-                    border: OutlineInputBorder(),
-                    suffixIcon: Icon(Icons.calendar_today),
-                  ),
-                  child: Text(
-                    DateFormat('MMMM dd, yyyy').format(_selectedDate),
-                  ),
-                ),
+              DatePickerField(
+                selectedDate: _selectedDate,
+                label: 'Income Date',
+                firstDate: DateTime(2020),
+                lastDate: DateTime.now(),
+                onDateSelected: (date) => setState(() => _selectedDate = date),
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: AppSizes.paddingLarge),
 
               // Income type selector
               Text(
                 'Income Type',
                 style: Theme.of(context).textTheme.titleMedium,
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: AppSizes.paddingSmall),
               _buildIncomeTypeSelector(),
-              const SizedBox(height: 24),
+              const SizedBox(height: AppSizes.paddingLarge),
 
               // Income source selector
               Text(
                 'Income Source',
                 style: Theme.of(context).textTheme.titleMedium,
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: AppSizes.paddingSmall),
               _buildIncomeSourceSelector(),
-              const SizedBox(height: 24),
+              const SizedBox(height: AppSizes.paddingLarge),
 
               // Description (optional)
-              TextFormField(
+              AppTextField(
                 initialValue: _description,
-                decoration: const InputDecoration(
-                  labelText: 'Description (Optional)',
-                  border: OutlineInputBorder(),
-                  hintText: 'e.g., Freelance project, Monthly salary',
-                ),
+                label: 'Description (Optional)',
+                hint: 'e.g., Freelance project, Monthly salary',
+                prefixIcon: Icons.notes,
                 maxLines: 2,
-                onSaved: (value) {
-                  _description = value ?? '';
-                },
+                onSaved: (value) => _description = value ?? '',
               ),
-              const SizedBox(height: 32),
+              const SizedBox(height: AppSizes.paddingXLarge),
 
               // Save button
-              FilledButton.icon(
+              AppButton.primary(
                 onPressed: _saveIncome,
-                icon: const Icon(Icons.save),
-                label: Text(widget.existingEntry != null ? 'Update Income' : 'Add Income'),
-                style: FilledButton.styleFrom(
-                  minimumSize: const Size.fromHeight(48),
-                ),
+                label: widget.existingEntry != null ? 'Update Income' : 'Add Income',
+                icon: Icons.save,
+                isFullWidth: true,
               ),
             ],
           ),
@@ -343,8 +279,8 @@ class _IncomeEntryScreenState extends ConsumerState<IncomeEntryScreen> {
 
   Widget _buildIncomeSourceSelector() {
     return Wrap(
-      spacing: 8,
-      runSpacing: 8,
+      spacing: AppSizes.paddingSmall,
+      runSpacing: AppSizes.paddingSmall,
       children: IncomeSource.values.map((source) {
         final isSelected = _selectedIncomeSource == source;
         return FilterChip(
@@ -391,20 +327,4 @@ class _IncomeEntryScreenState extends ConsumerState<IncomeEntryScreen> {
     }
   }
 
-  String _getCurrencySymbol(String currency) {
-    switch (currency) {
-      case 'KES':
-        return 'KSh ';
-      case 'NGN':
-        return '₦';
-      case 'GHS':
-        return 'GH₵ ';
-      case 'ZAR':
-        return 'R ';
-      case 'USD':
-        return '\$ ';
-      default:
-        return '';
-    }
-  }
 }

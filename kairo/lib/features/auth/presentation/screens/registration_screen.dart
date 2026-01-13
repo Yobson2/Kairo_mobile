@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:kairo/core/components/components.dart';
+import 'package:kairo/core/theme/theme.dart';
+import 'package:kairo/core/utils/utils.dart';
 import 'package:kairo/features/auth/domain/entities/user_entity.dart';
 import 'package:kairo/features/auth/presentation/providers/auth_providers.dart';
 
@@ -30,45 +33,6 @@ class _RegistrationScreenState extends ConsumerState<RegistrationScreen> {
     super.dispose();
   }
 
-  Future<void> _selectDateOfBirth() async {
-    final now = DateTime.now();
-    final initialDate = DateTime(now.year - 25, now.month, now.day);
-    final firstDate = DateTime(now.year - 120);
-    final lastDate = DateTime(now.year - 13); // Minimum age 13
-
-    final picked = await showDatePicker(
-      context: context,
-      initialDate: _dateOfBirth ?? initialDate,
-      firstDate: firstDate,
-      lastDate: lastDate,
-      helpText: 'Select your date of birth',
-    );
-
-    if (picked != null) {
-      setState(() {
-        _dateOfBirth = picked;
-      });
-    }
-  }
-
-  String _formatDate(DateTime date) {
-    final months = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec'
-    ];
-    return '${months[date.month - 1]} ${date.day}, ${date.year}';
-  }
-
   Future<void> _handleRegistration() async {
     if (!_formKey.currentState!.validate()) {
       return;
@@ -93,24 +57,20 @@ class _RegistrationScreenState extends ConsumerState<RegistrationScreen> {
   Widget build(BuildContext context) {
     final signUpState = ref.watch(signUpProvider);
 
+    // Listen for registration state changes
     ref.listen<AsyncValue<void>>(signUpProvider, (previous, next) {
       next.when(
         data: (_) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content:
-                  Text('Account created! Please check your email to verify.'),
-              backgroundColor: Colors.green,
-              duration: Duration(seconds: 4),
-            ),
+          SnackBarHelper.showSuccess(
+            context,
+            'Account created! Please check your email to verify.',
+            duration: AppDurations.snackBarLong,
           );
         },
         error: (error, stackTrace) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Registration failed: $error'),
-              backgroundColor: Colors.red,
-            ),
+          SnackBarHelper.showError(
+            context,
+            'Registration failed: $error',
           );
         },
         loading: () {},
@@ -128,199 +88,101 @@ class _RegistrationScreenState extends ConsumerState<RegistrationScreen> {
       ),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24.0),
+          padding: const EdgeInsets.all(AppSizes.paddingLarge),
           child: Form(
             key: _formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 // Personal Information Section
-                Row(
-                  children: [
-                    Icon(
-                      Icons.person_outline,
-                      size: 20,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      'Personal Information',
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: Theme.of(context).colorScheme.primary,
-                          ),
-                    ),
-                  ],
+                const SectionHeader(
+                  icon: Icons.person_outline,
+                  title: 'Personal Information',
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: AppSizes.paddingMedium),
 
                 // First Name
-                TextFormField(
+                AppTextField(
                   controller: _firstNameController,
-                  decoration: const InputDecoration(
-                    labelText: 'First Name',
-                    hintText: 'Enter your first name',
-                    prefixIcon: Icon(Icons.badge_outlined),
-                    border: OutlineInputBorder(),
-                  ),
+                  label: 'First Name',
+                  hint: 'Enter your first name',
+                  prefixIcon: Icons.badge_outlined,
                   textCapitalization: TextCapitalization.words,
                   textInputAction: TextInputAction.next,
-                  validator: (value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return 'Please enter your first name';
-                    }
-                    return null;
-                  },
+                  validator: (v) =>
+                      AppValidators.name(v, fieldName: 'First name'),
+                  enabled: !signUpState.isLoading,
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: AppSizes.paddingMedium),
 
                 // Last Name
-                TextFormField(
+                AppTextField(
                   controller: _lastNameController,
-                  decoration: const InputDecoration(
-                    labelText: 'Last Name',
-                    hintText: 'Enter your last name',
-                    prefixIcon: Icon(Icons.badge_outlined),
-                    border: OutlineInputBorder(),
-                  ),
+                  label: 'Last Name',
+                  hint: 'Enter your last name',
+                  prefixIcon: Icons.badge_outlined,
                   textCapitalization: TextCapitalization.words,
                   textInputAction: TextInputAction.next,
-                  validator: (value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return 'Please enter your last name';
-                    }
-                    return null;
-                  },
+                  validator: (v) =>
+                      AppValidators.name(v, fieldName: 'Last name'),
+                  enabled: !signUpState.isLoading,
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: AppSizes.paddingMedium),
 
                 // Date of Birth
-                InkWell(
-                  onTap: _selectDateOfBirth,
-                  borderRadius: BorderRadius.circular(4),
-                  child: InputDecorator(
-                    decoration: const InputDecoration(
-                      labelText: 'Date of Birth',
-                      hintText: 'Tap to select',
-                      prefixIcon: Icon(Icons.cake_outlined),
-                      border: OutlineInputBorder(),
-                    ),
-                    child: Text(
-                      _dateOfBirth != null
-                          ? _formatDate(_dateOfBirth!)
-                          : 'Tap to select your date of birth',
-                      style: TextStyle(
-                        color: _dateOfBirth != null
-                            ? Theme.of(context).textTheme.bodyLarge?.color
-                            : Colors.grey[600],
-                        fontSize: 16,
-                      ),
-                    ),
-                  ),
+                DatePickerField.dateOfBirth(
+                  selectedDate: _dateOfBirth,
+                  onDateSelected: (date) => setState(() => _dateOfBirth = date),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: AppSizes.paddingMedium),
 
                 // Gender
-                DropdownButtonFormField<String>(
+                AppSimpleDropdown(
                   value: _selectedGender,
-                  decoration: const InputDecoration(
-                    labelText: 'Gender (Optional)',
-                    hintText: 'Select if you wish',
-                    prefixIcon: Icon(Icons.wc_outlined),
-                    border: OutlineInputBorder(),
-                  ),
-                  items: ['Male', 'Female', 'Other', 'Prefer not to say']
-                      .map((gender) => DropdownMenuItem(
-                            value: gender,
-                            child: Text(gender),
-                          ))
-                      .toList(),
-                  onChanged: (value) {
-                    setState(() {
-                      _selectedGender = value;
-                    });
-                  },
+                  label: 'Gender (Optional)',
+                  hint: 'Select if you wish',
+                  prefixIcon: Icons.wc_outlined,
+                  items: const ['Male', 'Female', 'Other', 'Prefer not to say'],
+                  onChanged: (value) => setState(() => _selectedGender = value),
+                  enabled: !signUpState.isLoading,
                 ),
-                const SizedBox(height: 32),
+                const SizedBox(height: AppSizes.paddingXLarge),
 
                 // Account Section
-                Row(
-                  children: [
-                    Icon(
-                      Icons.email_outlined,
-                      size: 20,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      'Account Details',
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: Theme.of(context).colorScheme.primary,
-                          ),
-                    ),
-                  ],
+                const SectionHeader(
+                  icon: Icons.email_outlined,
+                  title: 'Account Details',
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: AppSizes.paddingMedium),
 
                 // Email
-                TextFormField(
+                AppTextField(
                   controller: _emailController,
-                  decoration: const InputDecoration(
-                    labelText: 'Email Address',
-                    hintText: 'you@example.com',
-                    prefixIcon: Icon(Icons.email_outlined),
-                    border: OutlineInputBorder(),
-                  ),
+                  label: 'Email Address',
+                  hint: 'you@example.com',
+                  prefixIcon: Icons.email_outlined,
                   keyboardType: TextInputType.emailAddress,
                   textInputAction: TextInputAction.done,
-                  validator: (value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return 'Please enter your email';
-                    }
-                    if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
-                        .hasMatch(value)) {
-                      return 'Please enter a valid email';
-                    }
-                    return null;
-                  },
+                  validator: AppValidators.email,
+                  enabled: !signUpState.isLoading,
                 ),
 
-                const SizedBox(height: 32),
+                const SizedBox(height: AppSizes.paddingXLarge),
 
                 // Create Account Button
-                FilledButton(
-                  onPressed: signUpState.isLoading ? null : _handleRegistration,
-                  style: FilledButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                  child: signUpState.isLoading
-                      ? const SizedBox(
-                          height: 20,
-                          width: 20,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: Colors.white,
-                          ),
-                        )
-                      : const Text(
-                          'Create Account',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+                AppButton.primary(
+                  onPressed: _handleRegistration,
+                  label: 'Create Account',
+                  isLoading: signUpState.isLoading,
+                  isFullWidth: true,
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: AppSizes.paddingMedium),
 
                 // Privacy & Terms
                 Text.rich(
                   TextSpan(
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Colors.grey[600],
+                          color: AppColors.neutral600,
                           height: 1.5,
                         ),
                     children: const [
@@ -344,7 +206,7 @@ class _RegistrationScreenState extends ConsumerState<RegistrationScreen> {
                   ),
                   textAlign: TextAlign.center,
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: AppSizes.paddingLarge),
 
                 // Login Link
                 Row(
@@ -354,14 +216,9 @@ class _RegistrationScreenState extends ConsumerState<RegistrationScreen> {
                       'Already have an account? ',
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      child: const Text(
-                        'Sign In',
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
+                    AppButton.text(
+                      onPressed: () => Navigator.of(context).pop(),
+                      label: 'Sign In',
                     ),
                   ],
                 ),

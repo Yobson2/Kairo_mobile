@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:kairo/core/theme/theme.dart';
 import 'package:kairo/features/allocation/domain/entities/income_entry.dart';
 import 'package:kairo/features/allocation/presentation/providers/allocation_providers.dart';
 import 'package:kairo/features/allocation/presentation/widgets/allocation_donut_chart.dart';
@@ -192,7 +193,7 @@ class _WelcomeHeader extends StatelessWidget {
         Text(
           'Your money has a plan',
           style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                color: Colors.grey[600],
+                color: AppColors.neutral600,
               ),
         ),
       ],
@@ -245,7 +246,7 @@ class _LatestIncomeSummary extends StatelessWidget {
                 Text(
                   _getCurrencySymbol(income.currency),
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        color: Colors.grey[600],
+                        color: AppColors.neutral600,
                       ),
                 ),
                 const SizedBox(width: 4),
@@ -261,7 +262,7 @@ class _LatestIncomeSummary extends StatelessWidget {
             Text(
               'Received on ${_formatDate(income.incomeDate)}',
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Colors.grey[600],
+                    color: AppColors.neutral600,
                   ),
             ),
           ],
@@ -273,11 +274,11 @@ class _LatestIncomeSummary extends StatelessWidget {
   Color _getIncomeTypeColor() {
     switch (income.incomeType) {
       case IncomeType.fixed:
-        return Colors.green;
+        return AppColors.success;
       case IncomeType.variable:
-        return Colors.orange;
+        return AppColors.warning;
       case IncomeType.mixed:
-        return Colors.blue;
+        return AppColors.info;
     }
   }
 
@@ -388,9 +389,9 @@ class _AllocationVisualization extends StatelessWidget {
 
   Color _parseColor(String colorHex) {
     try {
-      return Color(int.parse(colorHex.replaceFirst('#', '0xFF')));
+      return AppColors.fromHex(colorHex);
     } catch (e) {
-      return Colors.grey;
+      return AppColors.neutral500;
     }
   }
 }
@@ -420,25 +421,25 @@ class _QuickActionsGrid extends StatelessWidget {
             _QuickActionCard(
               icon: Icons.category,
               label: 'Categories',
-              color: Colors.purple,
+              color: Color(0xFF9C27B0),
               onTap: () => context.push('/categories'),
             ),
             _QuickActionCard(
               icon: Icons.layers,
               label: 'Strategies',
-              color: Colors.blue,
+              color: AppColors.info,
               onTap: () => context.push('/strategies'),
             ),
             _QuickActionCard(
               icon: Icons.history,
               label: 'Income History',
-              color: Colors.green,
+              color: AppColors.success,
               onTap: () => context.push('/dashboard/income/history'),
             ),
             _QuickActionCard(
               icon: Icons.settings,
               label: 'Settings',
-              color: Colors.grey,
+              color: AppColors.neutral500,
               onTap: () => context.push('/settings'),
             ),
           ],
@@ -520,7 +521,7 @@ class _EmptyStateCard extends StatelessWidget {
         padding: const EdgeInsets.all(32),
         child: Column(
           children: [
-            Icon(icon, size: 64, color: Colors.grey[400]),
+            Icon(icon, size: 64, color: AppColors.neutral400),
             const SizedBox(height: 16),
             Text(
               title,
@@ -533,7 +534,7 @@ class _EmptyStateCard extends StatelessWidget {
             Text(
               message,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Colors.grey[600],
+                    color: AppColors.neutral600,
                   ),
               textAlign: TextAlign.center,
             ),
@@ -578,7 +579,7 @@ class _ErrorCard extends StatelessWidget {
         padding: const EdgeInsets.all(32),
         child: Column(
           children: [
-            const Icon(Icons.error_outline, size: 64, color: Colors.red),
+            Icon(Icons.error_outline, size: 64, color: AppColors.error),
             const SizedBox(height: 16),
             Text(
               'Something went wrong',
@@ -589,7 +590,7 @@ class _ErrorCard extends StatelessWidget {
             Text(
               message,
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Colors.grey[600],
+                    color: AppColors.neutral600,
                   ),
               textAlign: TextAlign.center,
             ),

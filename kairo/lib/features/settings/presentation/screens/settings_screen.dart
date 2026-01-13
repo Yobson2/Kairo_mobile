@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:kairo/core/components/components.dart';
+import 'package:kairo/core/theme/theme.dart';
+import 'package:kairo/core/utils/utils.dart';
 import 'package:kairo/features/auth/presentation/providers/auth_providers.dart';
 
 /// Settings screen with user preferences and account management (Phase 5)
@@ -128,7 +131,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
                 // App info
                 Padding(
-                  padding: const EdgeInsets.all(24),
+                  padding: const EdgeInsets.all(AppSizes.paddingLarge),
                   child: Center(
                     child: Column(
                       children: [
@@ -141,24 +144,24 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                                 fontWeight: FontWeight.bold,
                               ),
                         ),
-                        const SizedBox(height: 4),
+                        const SizedBox(height: AppSizes.paddingXSmall),
                         Text(
                           'Version 1.0.0',
                           style: Theme.of(context)
                               .textTheme
                               .bodySmall
                               ?.copyWith(
-                                color: Colors.grey[600],
+                                color: Theme.of(context).colorScheme.onSurfaceVariant,
                               ),
                         ),
-                        const SizedBox(height: 8),
+                        const SizedBox(height: AppSizes.paddingSmall),
                         Text(
                           'Allocate with intention, live with clarity',
                           style: Theme.of(context)
                               .textTheme
                               .bodySmall
                               ?.copyWith(
-                                color: Colors.grey[600],
+                                color: Theme.of(context).colorScheme.onSurfaceVariant,
                                 fontStyle: FontStyle.italic,
                               ),
                           textAlign: TextAlign.center,
@@ -168,31 +171,24 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   ),
                 ),
 
-                const SizedBox(height: 16),
+                const SizedBox(height: AppSizes.paddingMedium),
 
                 // Sign out button
                 Padding(
-                  padding: const EdgeInsets.all(24),
-                  child: SizedBox(
-                    width: double.infinity,
-                    child: OutlinedButton.icon(
-                      onPressed: () => _signOut(context),
-                      icon: const Icon(Icons.logout),
-                      label: const Text('Sign Out'),
-                      style: OutlinedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        foregroundColor: Colors.red,
-                        side: const BorderSide(color: Colors.red),
-                      ),
-                    ),
+                  padding: const EdgeInsets.all(AppSizes.paddingLarge),
+                  child: AppButton.outlined(
+                    onPressed: () => _signOut(context),
+                    label: 'Sign Out',
+                    icon: Icons.logout,
+                    isFullWidth: true,
                   ),
                 ),
               ],
             ),
           );
         },
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text('Error: $e')),
+        loading: () => const LoadingIndicator(),
+        error: (e, _) => ErrorView.generic(message: 'Error loading settings: $e'),
       ),
     );
   }
@@ -347,7 +343,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               Navigator.pop(context);
               _deleteAccount(context);
             },
-            style: FilledButton.styleFrom(backgroundColor: Colors.red),
+            style: FilledButton.styleFrom(backgroundColor: AppColors.error),
             child: const Text('Delete Forever'),
           ),
         ],
@@ -357,51 +353,31 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
   // Action methods
   void _exportData(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Preparing your data export...'),
-        duration: Duration(seconds: 2),
-      ),
-    );
+    context.showInfoSnackBar('Preparing your data export...');
   }
 
   void _deleteAccount(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Account deletion initiated. Check your email.'),
-        backgroundColor: Colors.orange,
-      ),
-    );
+    context.showWarningSnackBar('Account deletion initiated. Check your email.');
   }
 
   void _openHelpCenter(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Opening help center...')),
-    );
+    context.showInfoSnackBar('Opening help center...');
   }
 
   void _reportBug(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Opening bug report form...')),
-    );
+    context.showInfoSnackBar('Opening bug report form...');
   }
 
   void _sendFeedback(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Opening feedback form...')),
-    );
+    context.showInfoSnackBar('Opening feedback form...');
   }
 
   void _openPrivacyPolicy(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Opening privacy policy...')),
-    );
+    context.showInfoSnackBar('Opening privacy policy...');
   }
 
   void _openTermsOfService(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Opening terms of service...')),
-    );
+    context.showInfoSnackBar('Opening terms of service...');
   }
 
   void _showLicenses(BuildContext context) {
@@ -453,7 +429,7 @@ class _ProfileSection extends StatelessWidget {
     final initial = email.isNotEmpty ? email[0].toUpperCase() : '?';
 
     return Container(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(AppSizes.paddingLarge),
       color: Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.3),
       child: Row(
         children: [
@@ -463,12 +439,12 @@ class _ProfileSection extends StatelessWidget {
             child: Text(
               initial,
               style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                    color: Colors.white,
+                    color: Theme.of(context).colorScheme.onPrimary,
                     fontWeight: FontWeight.bold,
                   ),
             ),
           ),
-          const SizedBox(width: 16),
+          const SizedBox(width: AppSizes.paddingMedium),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -483,7 +459,7 @@ class _ProfileSection extends StatelessWidget {
                 Text(
                   'Member since ${_formatDate(user.createdAt)}',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Colors.grey[600],
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
                 ),
               ],
@@ -509,7 +485,7 @@ class _SectionHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(24, 16, 24, 8),
+      padding: const EdgeInsets.fromLTRB(AppSizes.paddingLarge, AppSizes.paddingMedium, AppSizes.paddingLarge, AppSizes.paddingSmall),
       child: Text(
         title,
         style: Theme.of(context).textTheme.titleSmall?.copyWith(
@@ -542,19 +518,19 @@ class _SettingsTile extends StatelessWidget {
     return ListTile(
       leading: Icon(
         icon,
-        color: isDestructive ? Colors.red : null,
+        color: isDestructive ? AppColors.error : null,
       ),
       title: Text(
         title,
         style: TextStyle(
-          color: isDestructive ? Colors.red : null,
+          color: isDestructive ? AppColors.error : null,
           fontWeight: FontWeight.w500,
         ),
       ),
       subtitle: subtitle != null ? Text(subtitle!) : null,
       trailing: Icon(
         Icons.chevron_right,
-        color: isDestructive ? Colors.red : null,
+        color: isDestructive ? AppColors.error : null,
       ),
       onTap: onTap,
     );
